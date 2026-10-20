@@ -1,0 +1,8 @@
+# Copy these values into Tomcat's bin/setenv.sh, not into this repository.
+# DB_PASSWORD and all real credentials must stay outside version control.
+
+DB_URL=jdbc:mysql://localhost:3306/campus_exchange?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+DB_USER=campus_app
+DB_PASSWORD=CHANGE_ME_STRONG_PASSWORD
+UPLOAD_DIR=/home/pavan/campus-exchange/uploads
+BACKUP_DIR=/home/pavan/campus-exchange/backups

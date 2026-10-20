@@ -1,0 +1,50 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campus Resource Exchange</title>
+    <link rel="stylesheet" href="${ctx}/assets/css/styles.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <a class="brand" href="${ctx}/home">
+            <span class="brand-mark">CR</span>
+            <span class="brand-text">Campus Resource Exchange</span>
+        </a>
+        <button class="nav-toggle" type="button" data-nav-toggle
+                aria-label="Toggle navigation" aria-expanded="false">Menu</button>
+        <nav class="site-nav" data-nav>
+            <a href="${ctx}/resources">Browse</a>
+            <c:choose>
+                <c:when test="${not empty sessionScope.userId}">
+                    <c:if test="${sessionScope.role == 'ADMIN'}">
+                        <a href="${ctx}/admin">Admin</a>
+                    </c:if>
+                    <c:if test="${sessionScope.role == 'STUDENT'}">
+                        <a href="${ctx}/dashboard">Dashboard</a>
+                        <a href="${ctx}/resources/mine">My listings</a>
+                        <a href="${ctx}/requests/outgoing">Requests</a>
+                        <a href="${ctx}/transactions">Exchanges</a>
+                    </c:if>
+                    <a href="${ctx}/profile">Profile</a>
+                    <form class="inline-form" method="post" action="${ctx}/logout">
+                        <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                        <button class="link-button" type="submit">Log out</button>
+                    </form>
+                </c:when>
+                <c:otherwise>
+                    <a href="${ctx}/login">Log in</a>
+                    <a class="button button-small" href="${ctx}/register">Register</a>
+                </c:otherwise>
+            </c:choose>
+        </nav>
+    </div>
+</header>
+<main class="container">
+<%@ include file="messages.jspf" %>

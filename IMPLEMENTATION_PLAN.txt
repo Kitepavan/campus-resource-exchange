@@ -1,0 +1,1044 @@
+================================================================================
+PEER-TO-PEER ACADEMIC RESOURCE & BOOK EXCHANGE
+Implementation Plan
+================================================================================
+
+Generated: 2026-10-19
+Project root: /home/pavan/Java_Project_Class
+Status: COMPLETE (2026-10-20) - all phases implemented and verified: 50 JUnit/Mockito tests pass, the WAR builds, all JSPs compile, the database is initialized, the app is deployed on Tomcat, and scripts/smoke.sh passes 23 end-to-end checks (including after a restart).
+Source specification: project.md
+
+Confirmed decisions:
+  - Maven 3.9.12 and Tomcat 10.1.55 installed portably in ~/tools (no sudo).
+  - MySQL database and app user created by the user via "sudo mysql".
+  - JUnit 5 + Mockito unit tests; live MySQL checked by a curl smoke script.
+  - v1 skips OVERDUE, transaction CANCELLED, and the "Other" resource type.
+
+================================================================================
+1. OBJECTIVE
+================================================================================
+
+Build a complete Maven WAR application for Tomcat 10.1 that lets students list,
+search, request, exchange, lend, return, review, and moderate academic resources.
+MySQL is the source of truth. The application must demonstrate Jakarta Servlets,
+JSP/JSTL, JDBC/DAO, OOP, file handling, Java serialization, authentication,
+authorization, and automated tests.
+
+The application is complete only when the 20 acceptance criteria in project.md
+section 21 work end to end using the documented commands.
+
+================================================================================
+2. ENVIRONMENT AUDIT
+================================================================================
+
+Verified on 2026-10-19:
+
+  Java
+    - /usr/bin/java      -> JDK 25.0.4.1
+    - /usr/bin/javac     -> JDK 21.0.12.1
+    - JDKs installed: java-21-openjdk-amd64, java-25-openjdk-amd64
+    - Action: pin JAVA_HOME to JDK 21 for Maven and Tomcat; compile with
+      maven.compiler.release=17.
+
+  Maven
+    - Not installed.
+    - Candidate: 3.9.12 (apt) or portable tarball from archive.apache.org.
+    - Action: portable install in ~/tools/apache-maven-3.9.12.
+
+  Tomcat
+    - Not installed. Ports 8080/8005/8009 are free.
+    - Candidate: 10.1.55 (Servlet 6.0, JSP 3.1).
+    - Action: portable install in ~/tools/apache-tomcat-10.1.55.
+
+  MySQL
+    - Server 8.4.11 running on 127.0.0.1:3306.
+    - root login uses auth_socket; "mysql -u root" without sudo fails.
+    - No application database or user exists.
+    - Action: user runs the SQL block in section 18 via "sudo mysql".
+
+  Other
+    - Docker 29.1.3 available (fallback only).
+    - Maven Central and archive.apache.org reachable.
+    - ~57 GB free disk.
+    - sudo requires an interactive password.
+
+================================================================================
+3. ARCHITECTURE
+================================================================================
+
+Request flow:
+
+  Browser
+    -> JSP (WEB-INF/views, JSTL/EL)
+    -> Servlet (controller)
+    -> Service (business rules, transactions)
+    -> DAO (JDBC, PreparedStatement)
+    -> MySQL
+
+Rules:
+  - JSP contains no business logic and no Java scriptlets.
+  - Servlets do request parsing, validation dispatch, session checks, redirects.
+  - Services enforce business rules and own database transaction boundaries.
+  - DAOs contain SQL only and return domain objects; they never render HTML.
+  - No Spring, Spring MVC, JPA, Hibernate, Lombok, ORM, or JS framework.
+
+Layer responsibilities:
+
+  model/       Domain classes, enums, interfaces.
+  dao/         JDBC CRUD and queries; Connection overloads for transactions.
+  service/     Auth, resources, requests, transactions, reviews, admin, backup.
+  controller/  Servlets grouped by workflow.
+  filter/      One SecurityFilter: session auth, role checks, CSRF.
+  exception/   AppException hierarchy with user-safe messages.
+  util/        Config, DB connection, BCrypt, uploads, validation, flash, CSRF.
+  backup/      Serializable backup DTOs and ObjectInputFilter logic.
+
+================================================================================
+4. PROJECT STRUCTURE
+================================================================================
+
+/home/pavan/Java_Project_Class/
+  project.md
+  IMPLEMENTATION_PLAN.txt
+  pom.xml
+  README.md
+  .gitignore
+  config/
+    application.properties.example       (no secrets)
+  database/
+    schema.sql
+    sample_data.sql
+  scripts/
+    smoke.sh                             (curl end-to-end check)
+  src/main/java/com/campus/exchange/
+    model/
+      User.java (abstract)
+      Student.java
+      Admin.java
+      Resource.java (abstract, implements Searchable)
+      Book.java
+      LabEquipment.java
+      StudyMaterial.java
+      ResourceRequest.java
+      Transaction.java
+      Review.java
+      enums/
+        Role.java
+        VerificationStatus.java
+        ResourceType.java
+        Condition.java
+        ExchangeType.java
+        ResourceStatus.java
+        RequestStatus.java
+        TransactionStatus.java
+    model/interfaces/ or model/
+      Searchable.java
+      Sellable.java
+      Lendable.java
+    dao/
+      UserDAO.java
+      ResourceDAO.java
+      ResourceRequestDAO.java
+      TransactionDAO.java
+      ReviewDAO.java
+      ResourceSearchCriteria.java
+    service/
+      AuthService.java
+      ResourceService.java
+      RequestService.java
+      TransactionService.java
+      ReviewService.java
+      AdminService.java
+      BackupService.java
+    controller/
+      HomeServlet.java
+      AuthServlet.java
+      DashboardServlet.java
+      ResourceServlet.java
+      ImageServlet.java
+      RequestServlet.java
+      TransactionServlet.java
+      ReviewServlet.java
+      ProfileServlet.java
+      AdminServlet.java
+      AppContextListener.java
+    filter/
+      SecurityFilter.java
+    exception/
+      AppException.java
+      ValidationException.java
+      NotFoundException.java
+      AccessDeniedException.java
+      ConflictException.java
+    util/
+      AppConfig.java
+      DbConnection.java
+      PasswordUtil.java
+      UploadUtil.java
+      ValidationUtil.java
+      Flash.java
+      CsrfUtil.java
+      PasswordTool.java                 (prints a BCrypt hash for admin setup)
+    backup/
+      ResourceCatalogBackup.java
+      ResourceBackupItem.java
+  src/main/webapp/
+    WEB-INF/
+      web.xml
+      views/
+        fragments/header.jspf
+        fragments/footer.jspf
+        fragments/messages.jspf
+        home.jsp
+        auth/login.jsp
+        auth/register.jsp
+        student/dashboard.jsp
+        resources/list.jsp
+        resources/view.jsp
+        resources/form.jsp
+        resources/my-listings.jsp
+        requests/outgoing.jsp
+        requests/incoming.jsp
+        transactions/list.jsp
+        transactions/view.jsp
+        reviews/form.jsp
+        profile.jsp
+        admin/dashboard.jsp
+        admin/users.jsp
+        admin/listings.jsp
+        admin/activity.jsp
+        admin/backup.jsp
+        error/404.jsp
+        error/500.jsp
+    assets/
+      css/styles.css
+      js/app.js
+  src/test/java/com/campus/exchange/
+    model/ResourceTest.java
+    service/AuthServiceTest.java
+    service/ResourceServiceTest.java
+    service/RequestServiceTest.java
+    service/TransactionServiceTest.java
+    service/ReviewServiceTest.java
+    backup/BackupServiceTest.java
+
+================================================================================
+5. DOMAIN MODEL AND OOP MAPPING
+================================================================================
+
+Inheritance:
+  User (abstract)
+    - Student
+    - Admin
+  Resource (abstract)
+    - Book
+    - LabEquipment
+    - StudyMaterial
+
+  Student and Admin override abstract User behavior (dashboard route, display
+  role, permission checks).
+  Resource subclasses override displayDetails() with type-specific text.
+  Service code operates on Resource references and calls displayDetails()
+  polymorphically.
+
+Interfaces:
+  Searchable: boolean matches(String query)
+    - Implemented by Resource; searches title, description, category, course.
+  Sellable: BigDecimal getSalePrice()
+    - Implemented by Book, LabEquipment, StudyMaterial.
+  Lendable: int getLoanPeriodDays()
+    - Book: 30, LabEquipment: 7, StudyMaterial: 14.
+    - Used by ResourceService to validate LEND listings and show terms.
+
+Encapsulation:
+  Private fields, public getters/setters only where needed, no mutable
+  collections exposed directly.
+
+Exceptions:
+  AppException (base, user-safe message)
+    - ValidationException
+    - NotFoundException
+    - AccessDeniedException
+    - ConflictException
+  SQL exceptions are wrapped and logged; users never see stack traces or SQL.
+
+Collections:
+  List<T> for DAO results, request lists, transaction lists, reviews.
+  Map<String,Integer> for admin dashboard statistics.
+  Set<String> for allowed image extensions and allowed upload content types.
+  Comparator for catalog sorting (newest first).
+
+Enums:
+  Role: STUDENT, ADMIN
+  VerificationStatus: PENDING, VERIFIED, REJECTED
+  ResourceType: BOOK, LAB_EQUIPMENT, STUDY_MATERIAL
+  Condition: NEW, LIKE_NEW, GOOD, FAIR
+  ExchangeType: SELL, LEND, DONATE
+  ResourceStatus: AVAILABLE, RESERVED, LENT, UNAVAILABLE, INACTIVE
+  RequestStatus: PENDING, ACCEPTED, REJECTED, CANCELLED, COMPLETED
+  TransactionStatus: PENDING_HANDOVER, ACTIVE_LOAN, COMPLETED
+
+Domain fields (common):
+  User: userId, fullName, email, passwordHash, studentId, department,
+        yearOfStudy, role, verificationStatus, active, createdAt, updatedAt.
+  Resource: resourceId, ownerId, title, description, category, resourceType,
+        condition, exchangeType, price, lendingTerms, courseCode,
+        pickupLocation, imagePath, status, createdAt, updatedAt.
+  ResourceRequest: requestId, resourceId, requesterId, message, status,
+        createdAt, updatedAt.
+  Transaction: transactionId, requestId, ownerId, requesterId, exchangeType,
+        status, createdAt, completedAt, returnedAt.
+  Review: reviewId, transactionId, reviewerId, rating, comment, createdAt.
+
+================================================================================
+6. DATABASE SCHEMA (MySQL 8)
+================================================================================
+
+Database: campus_exchange
+Charset: utf8mb4 / utf8mb4_unicode_ci
+Engine: InnoDB
+
+users
+  user_id             INT AUTO_INCREMENT PRIMARY KEY
+  full_name           VARCHAR(120) NOT NULL
+  email               VARCHAR(190) NOT NULL UNIQUE
+  password_hash       VARCHAR(60) NOT NULL
+  student_id          VARCHAR(40) NULL UNIQUE
+  department          VARCHAR(100) NULL
+  year_of_study       TINYINT NULL
+  role                ENUM('STUDENT','ADMIN') NOT NULL DEFAULT 'STUDENT'
+  verification_status ENUM('PENDING','VERIFIED','REJECTED')
+                      NOT NULL DEFAULT 'PENDING'
+  is_active           BOOLEAN NOT NULL DEFAULT TRUE
+  created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                      ON UPDATE CURRENT_TIMESTAMP
+  CHECK (year_of_study IS NULL OR year_of_study BETWEEN 1 AND 8)
+
+resources
+  resource_id     INT AUTO_INCREMENT PRIMARY KEY
+  owner_id        INT NOT NULL
+  title           VARCHAR(150) NOT NULL
+  description     TEXT NOT NULL
+  category        VARCHAR(80) NOT NULL
+  resource_type   ENUM('BOOK','LAB_EQUIPMENT','STUDY_MATERIAL') NOT NULL
+  condition       ENUM('NEW','LIKE_NEW','GOOD','FAIR') NOT NULL
+  exchange_type   ENUM('SELL','LEND','DONATE') NOT NULL
+  price           DECIMAL(10,2) NULL
+  lending_terms   VARCHAR(500) NULL
+  course_code     VARCHAR(20) NULL
+  pickup_location VARCHAR(150) NOT NULL
+  image_path      VARCHAR(255) NULL
+  status          ENUM('AVAILABLE','RESERVED','LENT','UNAVAILABLE','INACTIVE')
+                  NOT NULL DEFAULT 'AVAILABLE'
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                  ON UPDATE CURRENT_TIMESTAMP
+  CONSTRAINT fk_resources_owner FOREIGN KEY (owner_id)
+    REFERENCES users(user_id) ON DELETE RESTRICT
+  CHECK (price IS NULL OR price >= 0)
+  INDEX idx_resources_search (status, exchange_type, resource_type, condition)
+  INDEX idx_resources_course (course_code)
+  INDEX idx_resources_owner (owner_id)
+  INDEX idx_resources_price (price)
+
+resource_requests
+  request_id    INT AUTO_INCREMENT PRIMARY KEY
+  resource_id   INT NOT NULL
+  requester_id  INT NOT NULL
+  message       VARCHAR(1000) NULL
+  status        ENUM('PENDING','ACCEPTED','REJECTED','CANCELLED','COMPLETED')
+                NOT NULL DEFAULT 'PENDING'
+  created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                ON UPDATE CURRENT_TIMESTAMP
+  FOREIGN KEY (resource_id) REFERENCES resources(resource_id)
+    ON DELETE RESTRICT
+  FOREIGN KEY (requester_id) REFERENCES users(user_id)
+    ON DELETE RESTRICT
+  INDEX idx_requests_resource_status (resource_id, status)
+  INDEX idx_requests_requester_status (requester_id, status)
+
+exchange_transactions
+  transaction_id INT AUTO_INCREMENT PRIMARY KEY
+  request_id     INT NOT NULL UNIQUE
+  owner_id       INT NOT NULL
+  requester_id   INT NOT NULL
+  exchange_type  ENUM('SELL','LEND','DONATE') NOT NULL
+  status         ENUM('PENDING_HANDOVER','ACTIVE_LOAN','COMPLETED')
+                 NOT NULL DEFAULT 'PENDING_HANDOVER'
+  created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  completed_at   TIMESTAMP NULL
+  returned_at    TIMESTAMP NULL
+  FOREIGN KEY (request_id) REFERENCES resource_requests(request_id)
+    ON DELETE RESTRICT
+  FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE RESTRICT
+  FOREIGN KEY (requester_id) REFERENCES users(user_id) ON DELETE RESTRICT
+  INDEX idx_transactions_owner (owner_id, status)
+  INDEX idx_transactions_requester (requester_id, status)
+
+reviews
+  review_id      INT AUTO_INCREMENT PRIMARY KEY
+  transaction_id INT NOT NULL UNIQUE
+  reviewer_id    INT NOT NULL
+  rating         TINYINT NOT NULL
+  comment        VARCHAR(1000) NULL
+  created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  FOREIGN KEY (transaction_id) REFERENCES exchange_transactions(transaction_id)
+    ON DELETE RESTRICT
+  FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE RESTRICT
+  CHECK (rating BETWEEN 1 AND 5)
+  INDEX idx_reviews_reviewer (reviewer_id)
+
+Historical safety:
+  - No hard deletes of users, resources, requests, transactions, or reviews.
+  - Resource removal is a status change to INACTIVE.
+  - User suspension is is_active = FALSE (login blocked).
+  - FK delete behavior is RESTRICT.
+  - Unique keys: users.email, users.student_id, exchange_transactions.request_id,
+    reviews.transaction_id.
+
+================================================================================
+7. STATE MACHINES AND BUSINESS RULES
+================================================================================
+
+Resource:
+  AVAILABLE -> RESERVED       when a request is accepted
+  RESERVED  -> LENT           when a LEND handover is confirmed
+  RESERVED  -> UNAVAILABLE    when a SELL/DONATE transaction completes
+  LENT      -> AVAILABLE      when a loan is returned (unless INACTIVE)
+  any       -> INACTIVE       owner deactivates or admin moderates
+  RESERVED/LENT listings cannot be edited or deactivated by the owner;
+  an administrator may still deactivate them.
+
+Request:
+  PENDING -> ACCEPTED         owner accepts
+  PENDING -> REJECTED         owner rejects
+  PENDING -> CANCELLED        requester cancels
+  ACCEPTED -> COMPLETED       associated transaction completes
+
+Transaction:
+  PENDING_HANDOVER -> COMPLETED       SELL/DONATE, owner or requester
+  PENDING_HANDOVER -> ACTIVE_LOAN     LEND, owner
+  ACTIVE_LOAN      -> COMPLETED       LEND return, owner
+
+Acceptance rule (single database transaction):
+  1. SELECT the request and its resource FOR UPDATE.
+  2. Require request.status = PENDING.
+  3. Require the acting user is the resource owner.
+  4. Require resource.status = AVAILABLE.
+  5. UPDATE resources SET status='RESERVED'
+     WHERE resource_id=? AND status='AVAILABLE'; require 1 row.
+  6. UPDATE resource_requests SET status='ACCEPTED'
+     WHERE request_id=? AND status='PENDING'; require 1 row.
+  7. INSERT exchange_transactions (request_id UNIQUE).
+  8. COMMIT; roll back on any failure.
+  Because the request row is locked and request_id is UNIQUE, a second
+  acceptance cannot reserve the resource twice or create a second transaction.
+
+Request creation rule (single database transaction):
+  1. Lock the resource row FOR UPDATE.
+  2. Require resource.status = AVAILABLE.
+  3. Require requester != owner.
+  4. Require requester is VERIFIED and active.
+  5. Reject an existing PENDING or ACCEPTED request for the same
+     requester/resource pair.
+  6. INSERT the request.
+
+Other rules:
+  - Only verified, active students may create listings or submit requests.
+  - Unverified students may browse and view listings.
+  - A student cannot edit or delete another student's listing.
+  - Only the requester may cancel a PENDING request.
+  - Only the owner may accept or reject.
+  - Only transaction participants may view or update a transaction.
+  - Reviews only by the requester, only after COMPLETED, one per transaction.
+  - Rating 1..5 enforced in the service and by a database CHECK.
+  - Admins cannot use student-only listing/request operations unless the
+    specification explicitly allows it; role checks are server-side.
+  - Client-supplied userId, role, price, status, ownerId, and timestamps are
+    never trusted.
+
+================================================================================
+8. WEB ROUTES AND PAGES
+================================================================================
+
+Public:
+  GET  /                         home.jsp, latest available resources
+  GET  /login                    auth/login.jsp
+  POST /login                    authenticate, regenerate session, redirect
+  GET  /register                 auth/register.jsp
+  POST /register                 create PENDING student, redirect to login
+  GET  /logout                   invalidate session, redirect to login
+  GET  /resources                catalog with search/filter
+  GET  /resources/view?id=       resource detail, owner public info, reviews
+  GET  /images/{file}            controlled image retrieval
+
+Authenticated student:
+  GET  /dashboard                student/dashboard.jsp
+  GET  /profile                  profile.jsp
+  POST /profile                  update own profile
+  GET  /resources/new            resources/form.jsp
+  POST /resources/new            create listing (verified only, multipart)
+  GET  /resources/edit?id=       resources/form.jsp (owner only)
+  POST /resources/edit?id=       update listing (owner only, multipart)
+  POST /resources/delete         deactivate own listing
+  GET  /resources/mine           my-listings.jsp
+  POST /requests/new             create request (verified only)
+  GET  /requests/outgoing        outgoing requests
+  GET  /requests/incoming        incoming requests for own listings
+  POST /requests/accept          owner accepts
+  POST /requests/reject          owner rejects
+  POST /requests/cancel          requester cancels
+  GET  /transactions             transaction history for participant
+  GET  /transactions/view?id=    transaction detail
+  POST /transactions/complete    SELL/DONATE handover (participant)
+  POST /transactions/return      LEND return (owner)
+  GET  /reviews/new?transactionId=  review form (requester, completed)
+  POST /reviews/new              submit review (requester, completed)
+
+Administrator:
+  GET  /admin                    stats dashboard
+  GET  /admin/users              list/filter users
+  POST /admin/users/verify       set VERIFIED
+  POST /admin/users/reject       set REJECTED
+  POST /admin/users/status       activate/suspend
+  GET  /admin/listings           browse/moderate listings
+  POST /admin/listings/status    deactivate listing
+  GET  /admin/activity           requests + transactions + reviews
+  GET  /admin/backup             backup page
+  POST /admin/backup/create      create .ser backup
+  POST /admin/backup/restore     restore a selected server-side backup
+
+Pages use fragments:
+  header.jspf   navigation, role-aware links, flash messages
+  footer.jspf   footer and script include
+  messages.jspf success/error flash rendering
+
+All JSPs live under WEB-INF/views and are reached through servlets.
+JSTL core/functions and EL are used; no scriptlets.
+One CSS file and one small JS file (image preview, confirm dialogs).
+
+================================================================================
+9. SECURITY
+================================================================================
+
+Authentication:
+  - BCrypt hashing (cost 12); plaintext passwords are never stored or logged.
+  - Login verifies hash, rejects inactive users.
+  - On success: request.changeSessionId(), then store userId, role,
+    displayName, csrfToken in the session.
+  - Logout invalidates the session.
+  - Session timeout: 30 minutes; HttpOnly cookie; SameSite not set by Tomcat
+    by default, documented.
+
+Authorization:
+  - SecurityFilter mapped to /*.
+  - Public paths: /, /login, /register, /logout, /resources, /resources/view,
+    /images/*, /assets/*, error pages.
+  - /admin/* requires ADMIN.
+  - Student workflows require STUDENT.
+  - Service methods re-check ownership and role; filters are not the only gate.
+
+CSRF:
+  - SecurityFilter checks a session-bound _csrf token on POST.
+  - Every form includes the token as a hidden field.
+  - Multipart create/edit forms are checked inside ResourceServlet after
+    parts are parsed (filter skips multipart only).
+
+Input and output:
+  - Server-side validation for every form.
+  - PreparedStatement for all SQL parameters; no string concatenation.
+  - JSTL c:out for user data; no raw HTML rendering.
+  - Uploads: extension/content/ImageIO validation, 5 MB limit, UUID filename,
+    configured directory outside the WAR.
+  - ImageServlet accepts only generated filenames matching
+    [a-f0-9-]+\.(jpg|jpeg|png|gif), resolves under UPLOAD_DIR, and returns 404
+    for missing files.
+  - Errors show safe messages; stack traces and SQL errors go to server logs.
+
+Session and secrets:
+  - DB password, upload dir, and backup dir come from environment variables.
+  - No credentials in the repository or in serialized backups.
+  - Backup files are server-generated names only; no user-supplied paths.
+
+================================================================================
+10. FILE HANDLING
+================================================================================
+
+Upload directory: ~/campus-exchange/uploads (override with UPLOAD_DIR).
+  - Created at startup if missing.
+  - Stored outside the WAR.
+  - Database stores only the generated filename.
+  - Accepted: JPEG, PNG, GIF; max 5 MB.
+  - Validation: content type, extension, and ImageIO decode.
+  - Filename: UUID + canonical extension (no browser filename).
+  - Replacement deletes the previous file after a successful DB update.
+  - Missing image shows a placeholder and does not break the page.
+
+Serving:
+  GET /images/{filename} -> ImageServlet streams image/png, image/jpeg, or
+  image/gif; Cache-Control set; 404 when absent.
+
+================================================================================
+11. SERIALIZATION AND BACKUP
+================================================================================
+
+Backup directory: ~/campus-exchange/backups (override with BACKUP_DIR).
+
+ResourceCatalogBackup implements Serializable:
+  serialVersionUID
+  createdAt (String)
+  List<ResourceBackupItem> items
+
+ResourceBackupItem implements Serializable:
+  ownerId, title, description, category, resourceType, condition,
+  exchangeType, price, lendingTerms, courseCode, pickupLocation, imagePath,
+  status.
+
+Create:
+  - Admin only.
+  - Read all resources through ResourceDAO.
+  - Write ObjectOutputStream to catalog-YYYYMMDD-HHmmss.ser under BACKUP_DIR.
+  - Never include users, password hashes, sessions, or credentials.
+
+Restore:
+  - Admin only; filename chosen from the server-side listing, never a path.
+  - ObjectInputStream with an ObjectInputFilter allowlist:
+      com.campus.exchange.backup.*
+      com.campus.exchange.model.*
+      java.util.ArrayList
+      java.lang.String
+      java.math.BigDecimal
+      !*
+  - Reject corrupt, truncated, oversized, or disallowed-class files with a
+    safe error.
+  - Validate every item (enums, price/exchange rules, owner exists) before
+    writing anything.
+  - Restore through ResourceService/ResourceDAO inside one transaction.
+  - Skip items whose ownerId + title already exist; never wipe existing data.
+  - Document that restore is additive/idempotent, not a replacement.
+
+Tests:
+  - Round trip create -> restore -> expected listings.
+  - Invalid class / corrupted file rejected.
+  - No password fields exist in the DTO.
+
+================================================================================
+12. CONFIGURATION
+================================================================================
+
+Environment variables (Tomcat bin/setenv.sh, outside the repository):
+  JAVA_HOME    /usr/lib/jvm/java-21-openjdk-amd64
+  DB_URL       jdbc:mysql://localhost:3306/campus_exchange?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+  DB_USER      campus_app
+  DB_PASSWORD  <set locally, never committed>
+  UPLOAD_DIR   /home/pavan/campus-exchange/uploads
+  BACKUP_DIR   /home/pavan/campus-exchange/backups
+
+AppConfig:
+  - Reads env vars.
+  - Defaults only for DB_URL and storage paths.
+  - DB_PASSWORD has no default; startup fails with a clear message if absent.
+  - No secrets in application.properties.example, README examples, or logs.
+
+First administrator:
+  - Run PasswordTool to print a BCrypt hash.
+  - Insert the admin row with SQL (documented in README).
+  - sample_data.sql provides development accounts with documented passwords;
+    README states they are for local development and must not be used in
+    production.
+
+Sample accounts (dev only, documented passwords):
+  admin@campus.test     ADMIN     VERIFIED
+  alice@campus.test     STUDENT   VERIFIED
+  bob@campus.test       STUDENT   VERIFIED
+  carol@campus.test     STUDENT   PENDING
+
+================================================================================
+13. IMPLEMENTATION PHASES
+================================================================================
+
+Every phase has a gate. A phase is not complete until its gate command actually
+runs and passes.
+
+PHASE 0 - ENVIRONMENT
+  Tasks:
+    - Create ~/tools.
+    - Download/extract Maven 3.9.12 and Tomcat 10.1.55.
+    - Pin JAVA_HOME to JDK 21 for build and Tomcat.
+    - User runs the MySQL setup SQL in section 18.
+    - Create ~/campus-exchange/uploads and ~/campus-exchange/backups.
+  Gate:
+    - mvn -v reports Java 21 and Maven 3.9.12.
+    - Tomcat starts on 8080 and serves the default page.
+    - mysql -u campus_app -p -e "SELECT 1" campus_exchange succeeds.
+
+PHASE 1 - FOUNDATION
+  Tasks:
+    - pom.xml (WAR, Java 17 release, dependencies, plugins).
+    - Package directories, web.xml, AppConfig, DbConnection, context listener.
+    - database/schema.sql.
+    - Empty WAR deployable to Tomcat.
+  Gate:
+    - mvn clean package succeeds and produces the WAR.
+    - Schema loads into campus_exchange without errors.
+    - WAR deploys and returns a placeholder home page.
+
+PHASE 2 - DOMAIN
+  Tasks:
+    - 10 domain classes, 8 enums, 3 interfaces.
+    - Custom exceptions and validation utilities.
+    - Domain unit tests (resource validation, price/exchange rules, rating).
+  Gate:
+    - mvn clean test passes.
+    - Resource displayDetails() is called through a Resource reference in a test.
+
+PHASE 3 - DATA AND SERVICES
+  Tasks:
+    - 5 DAOs with PreparedStatement and try-with-resources.
+    - Transactional accept/request methods using Connection overloads.
+    - 7 services with business rules.
+    - sample_data.sql with BCrypt hashes; PasswordTool.
+    - Mockito tests for all required business rules.
+  Gate:
+    - mvn clean test passes.
+    - Sample data loads.
+    - PasswordTool produces a hash that BCrypt verifies.
+
+PHASE 4 - WEB CORE
+  Tasks:
+    - SecurityFilter, UTF-8 config, session handling, CSRF.
+    - Header/footer/messages fragments and styles.css.
+    - Home, register, login, logout, dashboard, profile.
+    - Catalog, search/filter, resource detail, create/edit/deactivate.
+    - Image upload and ImageServlet.
+  Gate:
+    - Deploy, register/login/logout in a browser or curl.
+    - Create a listing with an image; restart Tomcat; listing persists.
+    - Search finds it; unauthorized edit is rejected.
+
+PHASE 5 - WORKFLOWS
+  Tasks:
+    - Requests: create, outgoing, incoming, cancel, accept, reject.
+    - Transactions: list, detail, complete handover, lend/return.
+    - Reviews: eligibility, form, duplicate prevention.
+  Gate:
+    - Two students complete a SELL flow and a LEND/return flow.
+    - Unauthorized and invalid transitions are rejected.
+    - Review after completion works; review before completion and duplicate
+      review fail.
+
+PHASE 6 - ADMIN AND BACKUP
+  Tasks:
+    - Admin stats, users, verification, suspension.
+    - Listing moderation, activity views.
+    - Serialization backup create/list/restore with allowlist and validation.
+  Gate:
+    - Admin verifies a pending student, who can then list/request.
+    - Backup round trip restores missing listings and skips duplicates.
+    - Corrupt/disallowed backup is rejected.
+    - Password hashes are absent from the backup (inspection/test).
+
+PHASE 7 - UX AND ERRORS
+  Tasks:
+    - Responsive layout, cards, forms, status labels, empty states.
+    - 404/500 pages, flash messages, confirmations.
+    - Verify every navigation link.
+  Gate:
+    - Pages usable at mobile and desktop widths.
+    - No broken links or raw stack traces.
+
+PHASE 8 - VERIFICATION AND DOCUMENTATION
+  Tasks:
+    - mvn clean test.
+    - mvn package.
+    - Deploy and run scripts/smoke.sh against MySQL.
+    - README: setup, config, DB init, deploy, demo accounts, contribution plan,
+      implemented modules, OOP mapping, limitations, exact results.
+  Gate:
+    - All tests pass; WAR builds; smoke script passes.
+    - README commands reproduce the environment from scratch.
+    - Final report lists only what was actually implemented and tested.
+
+Ordering note: Phase 0 requires the user's MySQL action. Maven/Tomcat downloads
+and Phases 1-3 can proceed in parallel with that step.
+
+================================================================================
+14. TEST PLAN (JUnit 5 + Mockito)
+================================================================================
+
+Unit tests run without MySQL.
+
+ResourceTest
+  - Valid SELL, LEND, DONATE resource data.
+  - SELL requires price > 0.
+  - DONATE forces price 0/null.
+  - LEND requires lending terms.
+  - Condition/type/enums validate.
+  - displayDetails() differs per subclass.
+  - matches() finds keyword/course.
+
+AuthServiceTest
+  - Register valid student -> BCrypt hash, PENDING.
+  - Duplicate email/student ID rejected.
+  - Invalid email/year/password rejected.
+  - Login correct password succeeds.
+  - Login wrong password fails.
+  - Inactive user cannot log in.
+
+ResourceServiceTest
+  - Verified student can create.
+  - Unverified student cannot create.
+  - Owner can edit/delete own listing.
+  - Non-owner cannot edit/delete.
+  - Reserved/lent listing cannot be edited.
+
+RequestServiceTest
+  - Cannot request own resource.
+  - Cannot request unavailable/reserved/lent resource.
+  - Duplicate pending/accepted request rejected.
+  - Unverified requester rejected.
+  - Owner-only accept/reject.
+  - Requester-only cancel; only PENDING cancellable.
+  - Second accept fails; resource reserved once.
+  - Accept creates exactly one transaction (DAO verification).
+  - Accept rolls back when the conditional resource update affects 0 rows.
+
+TransactionServiceTest
+  - SELL/DONATE PENDING_HANDOVER -> COMPLETED.
+  - LEND PENDING_HANDOVER -> ACTIVE_LOAN -> COMPLETED.
+  - Invalid transitions rejected.
+  - Return makes resource AVAILABLE.
+  - Return keeps INACTIVE when admin deactivated during loan.
+  - Non-participant cannot view/update.
+
+ReviewServiceTest
+  - Review before completion rejected.
+  - Non-requester rejected.
+  - Rating outside 1..5 rejected.
+  - Duplicate review rejected (service and unique key).
+  - Valid review accepted and visible.
+
+BackupServiceTest
+  - Serialize/deserialize round trip.
+  - Backup contains no password field.
+  - Corrupted file rejected.
+  - Disallowed class rejected by ObjectInputFilter.
+  - Invalid item (bad price/enum/missing owner) rejected before restore.
+  - Restore skips duplicates.
+
+Build commands:
+  mvn clean test
+  mvn package
+
+No claim of passing unless the commands were actually run and their output
+recorded.
+
+================================================================================
+15. ACCEPTANCE CHECKLIST (from project.md section 21)
+================================================================================
+
+[x]  1. Application starts using documented instructions.
+[x]  2. New student can register.
+[x]  3. Student can log in and log out.
+[x]  4. Administrator can verify a student.
+[x]  5. Verified student can create a listing.
+[x]  6. Listing persists in MySQL across a restart.
+[x]  7. Student can upload a resource image.
+[x]  8. Another student can search and find the resource.
+[x]  9. Second student can create a request.
+[x] 10. Owner can accept or reject the request.
+[x] 11. Acceptance creates a transaction consistently.
+[x] 12. Sold/donated resource becomes unavailable on completion.
+[x] 13. Lent resource can be returned and made available again.
+[x] 14. Eligible requester can review after completion.
+[x] 15. Duplicate reviews and invalid transitions are rejected.
+[x] 16. Unauthorized users cannot perform protected operations.
+[x] 17. Resource data can be backed up and restored by an admin.
+[x] 18. Required OOP concepts are represented in working code.
+[x] 19. Project builds with Maven.
+[x] 20. README explains setup, config, DB init, deployment, and demo.
+
+End-to-end smoke script (scripts/smoke.sh):
+  - Admin logs in, creates/verifies a fresh student.
+  - Student logs in, creates a listing with a tiny PNG.
+  - Second student registers, is verified, searches, requests.
+  - Owner accepts; transaction appears.
+  - SELL/DONATE completion marks resource UNAVAILABLE.
+  - LEND flow: active loan, return, resource AVAILABLE.
+  - Requester reviews; duplicate review fails.
+  - Admin creates a backup; restore reports success.
+  - Script fails on any unexpected HTTP status or missing page marker.
+
+================================================================================
+16. SETUP AND RUN COMMANDS (to be used in Phase 0/8)
+================================================================================
+
+Portable tools:
+
+  mkdir -p ~/tools
+  curl -fL https://archive.apache.org/dist/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.tar.gz \
+    -o /tmp/apache-maven-3.9.12-bin.tar.gz
+  tar -xzf /tmp/apache-maven-3.9.12-bin.tar.gz -C ~/tools
+
+  curl -fL https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.55/bin/apache-tomcat-10.1.55.tar.gz \
+    -o /tmp/apache-tomcat-10.1.55.tar.gz
+  tar -xzf /tmp/apache-tomcat-10.1.55.tar.gz -C ~/tools
+
+  export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+  export PATH="$JAVA_HOME/bin:$HOME/tools/apache-maven-3.9.12/bin:$PATH"
+  mvn -v
+
+MySQL setup (user runs this; choose a strong local password):
+
+  sudo mysql
+
+  CREATE DATABASE IF NOT EXISTS campus_exchange
+    CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  CREATE USER IF NOT EXISTS 'campus_app'@'localhost'
+    IDENTIFIED BY 'CHANGE_ME_STRONG_PASSWORD';
+  GRANT ALL PRIVILEGES ON campus_exchange.* TO 'campus_app'@'localhost';
+  FLUSH PRIVILEGES;
+  EXIT;
+
+  mysql -u campus_app -p campus_exchange < database/schema.sql
+  mysql -u campus_app -p campus_exchange < database/sample_data.sql
+
+Build:
+
+  export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+  export PATH="$JAVA_HOME/bin:$HOME/tools/apache-maven-3.9.12/bin:$PATH"
+  mvn clean test
+  mvn package
+
+Tomcat configuration (~/tools/apache-tomcat-10.1.55/bin/setenv.sh):
+
+  export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+  export DB_URL='jdbc:mysql://localhost:3306/campus_exchange?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true'
+  export DB_USER='campus_app'
+  export DB_PASSWORD='<local password>'
+  export UPLOAD_DIR="$HOME/campus-exchange/uploads"
+  export BACKUP_DIR="$HOME/campus-exchange/backups"
+
+Deploy and run:
+
+  mkdir -p "$HOME/campus-exchange/uploads" "$HOME/campus-exchange/backups"
+  cp target/campus-resource-exchange.war \
+     ~/tools/apache-tomcat-10.1.55/webapps/
+  ~/tools/apache-tomcat-10.1.55/bin/startup.sh
+  # open http://localhost:8080/campus-resource-exchange/
+
+  tail -f ~/tools/apache-tomcat-10.1.55/logs/catalina.out
+  ~/tools/apache-tomcat-10.1.55/bin/shutdown.sh
+
+Smoke test:
+
+  BASE_URL=http://localhost:8080/campus-resource-exchange \
+    bash scripts/smoke.sh
+
+================================================================================
+17. RISKS AND MITIGATIONS
+================================================================================
+
+MySQL access
+  - root uses auth_socket; the user must run the SQL block with sudo.
+  - Mitigation: one documented command block; app user gets only
+    campus_exchange.* privileges.
+
+Maven/Tomcat absent
+  - Mitigation: portable tarballs in ~/tools; no system changes, no sudo.
+
+JDK mismatch
+  - Default java is 25, javac is 21.
+  - Mitigation: pin JAVA_HOME=JDK 21 for Maven and Tomcat; release 17 bytecode.
+
+Serialization security
+  - Java deserialization is dangerous with untrusted input.
+  - Mitigation: admin-only, server-generated files only, ObjectInputFilter
+    allowlist, size/depth limits, validation before restore, no arbitrary paths.
+
+CSRF with multipart
+  - The auth filter cannot reliably read multipart fields before the servlet.
+  - Mitigation: the filter skips multipart; ResourceServlet validates _csrf
+    after parts are parsed.
+
+Database tests
+  - Unit tests use Mockito, so they do not prove SQL correctness.
+  - Mitigation: schema load, sample data, and the full curl smoke workflow
+    against MySQL in Phase 8.
+
+Tomcat port conflict
+  - Port 8080 is currently free; if occupied, change the connector port and
+    update BASE_URL.
+
+No browser automation
+  - Mitigation: curl smoke script plus a manual browser checklist for layout
+    and accessibility.
+
+================================================================================
+18. DELIBERATE V1 LIMITATIONS
+================================================================================
+
+Excluded by the specification:
+  - Online payments, real-time chat, external university verification APIs,
+    real-time notifications, AI recommendations, delivery/logistics,
+    microservices.
+
+Deliberately deferred:
+  - OVERDUE transaction status and reminders.
+  - Transaction CANCELLED flow after acceptance.
+  - "Other" resource type.
+  - Email verification, password reset, email notifications.
+  - Listing reactivation after deactivation (admin/owner).
+  - Backup download through the browser.
+  - Pagination of catalog/admin lists.
+  - Image thumbnails, cropping, or multiple images.
+  - Audit log and soft-delete restoration.
+  - Automated browser/UI tests.
+  - CSRF protection on multipart forms is enforced in the servlet, not the
+    global filter.
+
+These are documented in README rather than claimed as complete.
+
+================================================================================
+19. TEAM CONTRIBUTION MAPPING (for README)
+================================================================================
+
+Shllok - Core Application
+  - model/ classes, enums, interfaces.
+  - OOP: inheritance, polymorphism, abstraction, encapsulation.
+  - exception/ hierarchy.
+  - Business rules in services and their unit tests.
+  - Collections usage and displayDetails().
+
+Pavan - Data Management
+  - database/schema.sql and sample_data.sql.
+  - util/DbConnection, AppConfig.
+  - dao/ classes, JDBC, PreparedStatements, transactions.
+  - File handling (UploadUtil, ImageServlet).
+  - Serialization/backup (backup/, BackupService).
+  - Integration of backup with DAO/service layers.
+
+Shelly - UI and Web Application
+  - controller/ servlets.
+  - filter/SecurityFilter, session handling, CSRF.
+  - JSP pages, fragments, CSS, JavaScript.
+  - Navigation, forms, dashboards, error pages.
+  - Frontend/backend integration.
+
+Shared contracts:
+  - Service method signatures consumed by servlets.
+  - DAO methods consumed by services.
+  - Domain enums and status transitions.
+  - Every member can build and run the full project.
+
+================================================================================
+20. NEXT ACTION
+================================================================================
+
+None. Phase 8 is complete: tests, build, deployment, smoke script, README, and
+acceptance verification are all done. The running system is at
+http://localhost:8080/campus-resource-exchange/ with the demo accounts from
+database/sample_data.sql. Verified results are recorded in README section 15.
+================================================================================

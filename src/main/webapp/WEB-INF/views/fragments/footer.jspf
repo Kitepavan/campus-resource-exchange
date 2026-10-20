@@ -1,0 +1,10 @@
+</main>
+<footer class="site-footer">
+    <div class="footer-inner">
+        <span>Campus Resource Exchange</span>
+        <span>Built with Jakarta Servlets, JSP, JDBC, and MySQL.</span>
+    </div>
+</footer>
+<script src="${ctx}/assets/js/app.js" defer></script>
+</body>
+</html>

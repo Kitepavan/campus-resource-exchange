@@ -1,0 +1,12 @@
+target/
+*.class
+*.war
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+*.log
+config/application.properties
+application.properties
