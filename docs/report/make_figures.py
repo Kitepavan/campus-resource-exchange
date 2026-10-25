@@ -289,11 +289,12 @@ def figure_domain(out: Path):
     ]):
         svg.text(530, 150 + i * 20, line, 14, SOFT, "start", "normal", MONO)
 
-    for x, name, w in ((515, "Book", 130), (665, "LabEquipment", 155),
-                       (835, "StudyMaterial", 145)):
+    for x, name, w in ((515, "Book", 112), (634, "LabEquipment", 112),
+                       (753, "StudyMaterial", 112), (872, "DailyEssential", 112)):
         svg.rect(x, 380, w, 95, fill=PALE_BLUE, stroke=LINE, rx=6)
-        svg.text(x + w / 2, 414, name, 17, NAVY, "middle", "bold")
-        svg.text(x + w / 2, 440, "+ displayDetails()", 12, SOFT, "middle",
+        svg.text(x + w / 2, 414, name, 13.5 if len(name) > 10 else 17, NAVY,
+                 "middle", "bold")
+        svg.text(x + w / 2, 440, "displayDetails()", 10, SOFT, "middle",
                  "normal", MONO)
         svg.line(x + w / 2, 380, x + w / 2, 304)
         svg.polygon([(x + w / 2, 290), (x + w / 2 - 8, 304),
@@ -305,15 +306,15 @@ def figure_domain(out: Path):
     svg.text(920, 64, "Searchable", 14, TEAL, "middle", "bold")
     svg.line(920, 100, 920, 80, TEAL, 1.4, dash="5 3")
 
-    svg.rect(575, 500, 290, 52, fill=PALE_TEAL, stroke=TEAL, rx=6, dash="5 3")
-    svg.text(720, 519, "«interface» Sellable / Lendable", 14, TEAL, "middle",
+    svg.rect(604, 500, 290, 52, fill=PALE_TEAL, stroke=TEAL, rx=6, dash="5 3")
+    svg.text(749, 519, "«interface» Sellable / Lendable", 14, TEAL, "middle",
              "bold")
-    svg.text(720, 538, "getSalePrice() · getLoanPeriodDays()", 10, TEAL,
+    svg.text(749, 538, "getSalePrice() · getLoanPeriodDays()", 10, TEAL,
              "middle")
-    for x in (515, 720, 835):
+    for x in (571, 690, 809, 928):
         svg.line(x, 475, x, 490, TEAL, 1.3, dash="5 3")
-    svg.line(515, 490, 835, 490, TEAL, 1.3, dash="5 3")
-    svg.line(720, 490, 720, 500, TEAL, 1.3, dash="5 3")
+    svg.line(571, 490, 928, 490, TEAL, 1.3, dash="5 3")
+    svg.line(749, 490, 749, 500, TEAL, 1.3, dash="5 3")
 
     # Associations
     svg.line(320, 165, 520, 165, MUTED, 1.4)

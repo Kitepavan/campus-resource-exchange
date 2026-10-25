@@ -325,17 +325,17 @@ return transactionDAO.insert(conn, transaction);
 
 ### 4.6 Security design
 
-Table 4.4 organises the security design using the STRIDE categories. The table is deliberately blunt about residual risk: a design table that claims every threat is eliminated is not credible. The most significant gaps are the absence of rate limiting, multi-factor authentication, encryption of backup files, and an independent audit log.
+Table 4.4 organises the security design using the STRIDE categories. The table is deliberately blunt about residual risk: a design table that claims every threat is eliminated is not credible. The most significant gaps are the absence of multi-factor authentication, of a general request-flooding limit, of encryption for backup files, and of an independent audit log.
 
 <p class="table-caption" id="tab4-4">Table 4.4. Threat model and implemented controls.</p>
 
 | Threat | Example | Controls | Residual risk |
 |---|---|---|---|
-| Spoofing | Guessing another user's credentials; session fixation | BCrypt cost 12; `changeSessionId()` on login; HttpOnly session cookie; session invalidation on logout | No MFA or login throttling |
+| Spoofing | Guessing another user's credentials; session fixation | BCrypt cost 12; `changeSessionId()` on login; HttpOnly and `SameSite=Lax` session cookie; session invalidation on logout; per-email login throttle (5 failures / 15 minutes) | No MFA; the throttle is in memory and per instance |
 | Tampering | Posting another owner's resource ID; changing a price or status in the form | Server-side validation; ownership checks in services; conditional updates; CSRF token on POST | A compromised browser can still submit valid requests |
 | Repudiation | Denying that a request was accepted | Database timestamps and status history in the transaction row | No separate immutable audit log |
 | Information disclosure | Reading another student's requests; leaking stack traces | Authorisation checks; JSP escaping; generic error pages; no SQL errors shown | Backup files are unencrypted on disk |
-| Denial of service | Uploading a huge file; flooding requests | 5 MB image limit; request-size limit; indexed queries | No rate limiting or account lockout |
+| Denial of service | Uploading a huge file; flooding requests | 5 MB image limit; 40 MP decode cap; request-size limit; indexed queries; login throttle | No general request-flooding limit |
 | Elevation of privilege | Forging an admin role in a request | Role is read from the database, never from the request; filter and service both check | A single administrator role has broad powers |
 
 Two design choices are worth highlighting. First, **authorisation is duplicated on purpose**. `SecurityFilter` blocks `/admin/*` for non-admins and student-only paths for admins, but services such as `ResourceService.update`, `RequestService.acceptRequest`, and `TransactionService.markReturned` re-check ownership and role. This is defence in depth: if a new route is added without a filter update, the service remains the final authority. Second, **the browser is never trusted for identity or state**. The session stores only the user ID and role for display; on every request the filter reloads the user from the database and re-derives `isActive()` and `isVerified()`, so a suspended account loses access immediately.
@@ -348,7 +348,7 @@ Catalogue backups use Java serialisation, as required by the brief. `ResourceCat
 
 ### 4.8 Interface design
 
-The interface is built from 22 JSP/JSPF templates, a single 1,173-line stylesheet, and a 45-line JavaScript file that only toggles mobile navigation. The visual language is a light background with dark navy and teal accents, consistent spacing, status badges, and explicit empty states. Pages are server-rendered; JavaScript does not perform validation or business logic. The layout is responsive: the catalogue uses a card grid that collapses to one column on narrow screens, forms use full-width controls, and tables scroll horizontally rather than forcing the page wider than the viewport.
+The interface is built from 22 JSP/JSPF templates, a single 1,187-line stylesheet, and a 69-line JavaScript file that toggles mobile navigation, hides the price or loan-terms fields according to the selected exchange type, and synchronises the category picker. The visual language is a light background with dark navy and teal accents, consistent spacing, status badges, and explicit empty states. Pages are server-rendered; JavaScript does not perform validation or business logic, and every form still submits correctly with scripting disabled. The layout is responsive: the catalogue uses a card grid that collapses to one column on narrow screens, forms use full-width controls, and tables scroll horizontally rather than forcing the page wider than the viewport.
 
 ## 5. Implementation
 
@@ -537,6 +537,8 @@ The evaluation used four complementary levels:
 - **Manual acceptance walkthrough** of every page, including the 404 route, profile update, persistence across restart, and a restore of a deliberately deleted listing.
 
 This mix is deliberate. Unit tests are fast and precise but mock the database, so they cannot prove that SQL or JSPs work. The smoke suite exercises the real database, container, sessions, CSRF, and templates, but it is coarse: it asserts markers, not visual layout. Neither replaces a browser-based UI test, which is identified as future work.
+
+Both suites are also wired into continuous integration. `.github/workflows/ci.yml` runs `mvn -B clean package` on every push to `main` and on pull requests, and a second job provisions MySQL 8 and Tomcat 10.1, loads `database/schema.sql` and `database/sample_data.sql`, deploys the WAR, waits for the login page, and runs the full smoke suite. The first run for this revision passed both jobs (26 s and 56 s). That job is the cheapest guard against the failure this revision had to fix: a business-rule change that silently invalidated the smoke suite.
 
 ### 6.2 Unit test inventory
 

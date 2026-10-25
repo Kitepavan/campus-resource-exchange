@@ -1060,7 +1060,7 @@ transaction.setStatus(TransactionStatus.PENDING_HANDOVER);
 return transactionDAO.insert(conn, transaction);
 </code></pre>
 <h3 id="46-security-design">4.6 Security design</h3>
-<p>Table 4.4 organises the security design using the STRIDE categories. The table is deliberately blunt about residual risk: a design table that claims every threat is eliminated is not credible. The most significant gaps are the absence of rate limiting, multi-factor authentication, encryption of backup files, and an independent audit log.</p>
+<p>Table 4.4 organises the security design using the STRIDE categories. The table is deliberately blunt about residual risk: a design table that claims every threat is eliminated is not credible. The most significant gaps are the absence of multi-factor authentication, of a general request-flooding limit, of encryption for backup files, and of an independent audit log.</p>
 <p class="table-caption" id="tab4-4"><strong>Table 4.4.</strong> Threat model and implemented controls.</p>
 
 <table>
@@ -1076,8 +1076,8 @@ return transactionDAO.insert(conn, transaction);
 <tr>
 <td>Spoofing</td>
 <td>Guessing another user&rsquo;s credentials; session fixation</td>
-<td>BCrypt cost 12; <code>changeSessionId()</code> on login; HttpOnly session cookie; session invalidation on logout</td>
-<td>No MFA or login throttling</td>
+<td>BCrypt cost 12; <code>changeSessionId()</code> on login; HttpOnly and <code>SameSite=Lax</code> session cookie; session invalidation on logout; per-email login throttle (5 failures / 15 minutes)</td>
+<td>No MFA; the throttle is in memory and per instance</td>
 </tr>
 <tr>
 <td>Tampering</td>
@@ -1100,8 +1100,8 @@ return transactionDAO.insert(conn, transaction);
 <tr>
 <td>Denial of service</td>
 <td>Uploading a huge file; flooding requests</td>
-<td>5 MB image limit; request-size limit; indexed queries</td>
-<td>No rate limiting or account lockout</td>
+<td>5 MB image limit; 40 MP decode cap; request-size limit; indexed queries; login throttle</td>
+<td>No general request-flooding limit</td>
 </tr>
 <tr>
 <td>Elevation of privilege</td>
@@ -1116,7 +1116,7 @@ return transactionDAO.insert(conn, transaction);
 <p>Listing images are stored outside the deployable WAR, in a configurable upload directory. The database stores only the generated filename, never an absolute path. Retrieval goes through <code>ImageServlet</code>, which accepts only names matching the UUID-plus-extension pattern, normalises the path, verifies that the resolved path is still inside the upload directory, and checks that the file exists before streaming it. This design removes the two classic upload failures: a browser-supplied filename containing <code>../</code>, and a request that asks the server to read an arbitrary file.</p>
 <p>Catalogue backups use Java serialisation, as required by the brief. <code>ResourceCatalogBackup</code> contains a list of <code>ResourceBackupItem</code> objects; each item stores the listing fields needed for restoration and deliberately excludes users, password hashes, and session data. Backups are written to a configurable backup directory with a timestamped filename. Restore is <em>additive</em>: an item whose owner and title already exist is skipped, and only new items are inserted, all inside one transaction. The deserialisation path is the security-sensitive part and is described in Section 5.7.</p>
 <h3 id="48-interface-design">4.8 Interface design</h3>
-<p>The interface is built from 22 JSP/JSPF templates, a single 1,173-line stylesheet, and a 45-line JavaScript file that only toggles mobile navigation. The visual language is a light background with dark navy and teal accents, consistent spacing, status badges, and explicit empty states. Pages are server-rendered; JavaScript does not perform validation or business logic. The layout is responsive: the catalogue uses a card grid that collapses to one column on narrow screens, forms use full-width controls, and tables scroll horizontally rather than forcing the page wider than the viewport.</p>
+<p>The interface is built from 22 JSP/JSPF templates, a single 1,187-line stylesheet, and a 69-line JavaScript file that toggles mobile navigation, hides the price or loan-terms fields according to the selected exchange type, and synchronises the category picker. The visual language is a light background with dark navy and teal accents, consistent spacing, status badges, and explicit empty states. Pages are server-rendered; JavaScript does not perform validation or business logic, and every form still submits correctly with scripting disabled. The layout is responsive: the catalogue uses a card grid that collapses to one column on narrow screens, forms use full-width controls, and tables scroll horizontally rather than forcing the page wider than the viewport.</p>
 <h2 id="5-implementation">5. Implementation</h2>
 <h3 id="51-technology-stack">5.1 Technology stack</h3>
 <p>Table 5.1 records the stack and versions actually used. The versions are part of the result: the <code>jakarta.*</code> namespace and Tomcat 10.1 are not interchangeable with older <code>javax.servlet</code> deployments. The implementation targets the Jakarta Servlet 6.0 [9] and Jakarta Server Pages 3.1 [16] specifications, is deployed on Tomcat 10.1 [10], and relies on the MySQL 8 reference behaviour [11] and the JDBC API [12] for persistence and transaction control.</p>
@@ -1474,6 +1474,7 @@ if (criteria.getLimit() &gt; 0) {
 <li><strong>Manual acceptance walkthrough</strong> of every page, including the 404 route, profile update, persistence across restart, and a restore of a deliberately deleted listing.</li>
 </ul>
 <p>This mix is deliberate. Unit tests are fast and precise but mock the database, so they cannot prove that SQL or JSPs work. The smoke suite exercises the real database, container, sessions, CSRF, and templates, but it is coarse: it asserts markers, not visual layout. Neither replaces a browser-based UI test, which is identified as future work.</p>
+<p>Both suites are also wired into continuous integration. <code>.github/workflows/ci.yml</code> runs <code>mvn -B clean package</code> on every push to <code>main</code> and on pull requests, and a second job provisions MySQL 8 and Tomcat 10.1, loads <code>database/schema.sql</code> and <code>database/sample_data.sql</code>, deploys the WAR, waits for the login page, and runs the full smoke suite. The first run for this revision passed both jobs (26 s and 56 s). That job is the cheapest guard against the failure this revision had to fix: a business-rule change that silently invalidated the smoke suite.</p>
 <h3 id="62-unit-test-inventory">6.2 Unit test inventory</h3>
 <p>Table 6.1 lists the seven test classes and their focus. The suite contains 53 tests. Transactional methods are tested through package-private overloads that accept a <code>Connection</code>, which allows the locking and conditional-update logic to be exercised with mocks while the public method remains responsible for opening and committing the connection.</p>
 <p class="table-caption" id="tab6-1"><strong>Table 6.1.</strong> Unit test inventory.</p>
