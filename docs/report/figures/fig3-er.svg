@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="670" viewBox="0 30 1000 670"><rect width="1000" height="700" fill="#ffffff"/><rect x="30" y="45" width="250" height="180" rx="6" fill="#ffffff" stroke="#8fa6bd" stroke-width="1.3"/>
+<path d="M36,45 H274 A6,6 0 0 1 280,51 V75 H30 V51 A6,6 0 0 1 36,45 Z" fill="#123a6b" stroke="none"/>
+<text x="155.0" y="66" font-family="Liberation Mono" font-size="19" font-weight="bold" fill="#ffffff" text-anchor="middle">users</text>
+<text x="40" y="91" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">PK  user_id</text>
+<text x="40" y="111" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">UQ  email</text>
+<text x="40" y="131" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     password_hash</text>
+<text x="40" y="151" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">UQ  student_id</text>
+<text x="40" y="171" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     role</text>
+<text x="40" y="191" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     verification_status</text>
+<text x="40" y="211" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     is_active</text>
+<rect x="350" y="45" width="280" height="220" rx="6" fill="#ffffff" stroke="#8fa6bd" stroke-width="1.3"/>
+<path d="M356,45 H624 A6,6 0 0 1 630,51 V75 H350 V51 A6,6 0 0 1 356,45 Z" fill="#0f766e" stroke="none"/>
+<text x="490.0" y="66" font-family="Liberation Mono" font-size="19" font-weight="bold" fill="#ffffff" text-anchor="middle">resources</text>
+<text x="360" y="91" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">PK  resource_id</text>
+<text x="360" y="111" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  owner_id</text>
+<text x="360" y="131" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     title, category</text>
+<text x="360" y="151" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     resource_type</text>
+<text x="360" y="171" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     condition</text>
+<text x="360" y="191" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     exchange_type</text>
+<text x="360" y="211" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     price, status</text>
+<text x="360" y="231" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     image_path</text>
+<text x="360" y="251" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     created_at</text>
+<rect x="30" y="370" width="250" height="160" rx="6" fill="#ffffff" stroke="#8fa6bd" stroke-width="1.3"/>
+<path d="M36,370 H274 A6,6 0 0 1 280,376 V400 H30 V376 A6,6 0 0 1 36,370 Z" fill="#123a6b" stroke="none"/>
+<text x="155.0" y="391" font-family="Liberation Mono" font-size="19" font-weight="bold" fill="#ffffff" text-anchor="middle">resource_requests</text>
+<text x="40" y="416" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">PK  request_id</text>
+<text x="40" y="436" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  resource_id</text>
+<text x="40" y="456" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  requester_id</text>
+<text x="40" y="476" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     message</text>
+<text x="40" y="496" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     status</text>
+<text x="40" y="516" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     created_at</text>
+<rect x="350" y="370" width="290" height="200" rx="6" fill="#ffffff" stroke="#8fa6bd" stroke-width="1.3"/>
+<path d="M356,370 H634 A6,6 0 0 1 640,376 V400 H350 V376 A6,6 0 0 1 356,370 Z" fill="#0f766e" stroke="none"/>
+<text x="495.0" y="391" font-family="Liberation Mono" font-size="19" font-weight="bold" fill="#ffffff" text-anchor="middle">exchange_transactions</text>
+<text x="360" y="416" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">PK  transaction_id</text>
+<text x="360" y="436" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  request_id  (unique)</text>
+<text x="360" y="456" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  owner_id</text>
+<text x="360" y="476" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  requester_id</text>
+<text x="360" y="496" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     exchange_type</text>
+<text x="360" y="516" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     status</text>
+<text x="360" y="536" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     completed_at</text>
+<text x="360" y="556" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     returned_at</text>
+<rect x="710" y="370" width="260" height="160" rx="6" fill="#ffffff" stroke="#8fa6bd" stroke-width="1.3"/>
+<path d="M716,370 H964 A6,6 0 0 1 970,376 V400 H710 V376 A6,6 0 0 1 716,370 Z" fill="#123a6b" stroke="none"/>
+<text x="840.0" y="391" font-family="Liberation Mono" font-size="19" font-weight="bold" fill="#ffffff" text-anchor="middle">reviews</text>
+<text x="720" y="416" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">PK  review_id</text>
+<text x="720" y="436" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  transaction_id  (unique)</text>
+<text x="720" y="456" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">FK  reviewer_id</text>
+<text x="720" y="476" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     rating  (1–5)</text>
+<text x="720" y="496" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     comment</text>
+<text x="720" y="516" font-family="Liberation Mono" font-size="16" font-weight="normal" fill="#334e68" text-anchor="start">     created_at</text>
+<polyline points="280,130 350,130" fill="none" stroke="#52677d" stroke-width="1.4" stroke-linejoin="round"/>
+<line x1="350" y1="130" x2="359.7124235214482" y2="124.8358128093552" stroke="#334e68" stroke-width="1.5"/>
+<line x1="350" y1="130" x2="361.0" y2="130.0" stroke="#334e68" stroke-width="1.5"/>
+<line x1="350" y1="130" x2="359.7124235214482" y2="135.1641871906448" stroke="#334e68" stroke-width="1.5"/>
+<text x="294" y="122" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">1</text>
+<text x="338" y="122" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">0..*</text>
+<polyline points="155,225 155,370" fill="none" stroke="#52677d" stroke-width="1.4" stroke-linejoin="round"/>
+<line x1="155" y1="370" x2="149.8358128093552" y2="360.2875764785518" stroke="#334e68" stroke-width="1.5"/>
+<line x1="155" y1="370" x2="155.0" y2="359.0" stroke="#334e68" stroke-width="1.5"/>
+<line x1="155" y1="370" x2="160.16418719064478" y2="360.2875764785518" stroke="#334e68" stroke-width="1.5"/>
+<text x="169" y="217" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">1</text>
+<text x="143" y="362" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">0..*</text>
+<polyline points="490,265 490,320 280,320 280,370" fill="none" stroke="#52677d" stroke-width="1.4" stroke-linejoin="round"/>
+<line x1="280" y1="370" x2="274.8358128093552" y2="360.2875764785518" stroke="#334e68" stroke-width="1.5"/>
+<line x1="280" y1="370" x2="280.0" y2="359.0" stroke="#334e68" stroke-width="1.5"/>
+<line x1="280" y1="370" x2="285.1641871906448" y2="360.2875764785518" stroke="#334e68" stroke-width="1.5"/>
+<text x="500" y="305" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">1</text>
+<text x="268" y="356" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">0..*</text>
+<line x1="280" y1="455" x2="350" y2="455" stroke="#52677d" stroke-width="1.4"/>
+<text x="300" y="447" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">1</text>
+<text x="338" y="447" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">0..1</text>
+<line x1="640" y1="455" x2="710" y2="455" stroke="#52677d" stroke-width="1.4"/>
+<text x="655" y="447" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">1</text>
+<text x="692" y="447" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#52677d" text-anchor="middle">0..1</text>
+<text x="20" y="665" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#52677d" text-anchor="start">All foreign keys use ON DELETE RESTRICT; unique keys enforce one transaction per request and one review per transaction.</text></svg>

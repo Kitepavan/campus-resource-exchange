@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Campus Resource Exchange — Project Report</title>
+<meta name="author" content="Shllok, Pavan, Shelly">
+<meta name="description" content="A Layered Java Web Application for Peer-to-Peer Academic Resource Sharing">
+<meta name="keywords" content="Jakarta EE, servlet, JSP, JDBC, MySQL, software engineering, web application">
+<style>
+@page {
+  size: A4;
+  margin: 22mm 22mm 20mm 22mm;
+  @top-left {
+    content: "Campus Resource Exchange";
+    font-family: "Liberation Sans", sans-serif;
+    font-size: 7.8pt;
+    color: #627d98;
+    letter-spacing: 0.02em;
+  }
+  @top-right {
+    content: "Project Report";
+    font-family: "Liberation Sans", sans-serif;
+    font-size: 7.8pt;
+    color: #627d98;
+    letter-spacing: 0.02em;
+  }
+  @bottom-center {
+    content: counter(page);
+    font-family: "Liberation Sans", sans-serif;
+    font-size: 8.5pt;
+    color: #334e68;
+  }
+}
+
+@page :first {
+  margin: 0;
+  @top-left { content: none; }
+  @top-right { content: none; }
+  @bottom-center { content: none; }
+}
+
+html {
+  font-family: "Liberation Serif", "DejaVu Serif", serif;
+  font-size: 10.4pt;
+  line-height: 1.52;
+  color: #102a43;
+}
+
+body { margin: 0; }
+
+p {
+  margin: 0 0 0.55em;
+  text-align: left;
+  orphans: 3;
+  widows: 3;
+  hyphens: manual;
+}
+
+a { color: #0b5c56; text-decoration: none; }
+
+h1, h2, h3, h4 {
+  font-family: "Liberation Sans", "DejaVu Sans", sans-serif;
+  color: #0b2749;
+  line-height: 1.2;
+  break-after: avoid;
+}
+
+h2 {
+  font-size: 16.5pt;
+  margin: 0 0 7mm;
+  padding-bottom: 2.2mm;
+  border-bottom: 1.2pt solid #0f766e;
+  break-before: page;
+}
+
+h2.toc-title {
+  break-before: avoid;
+}
+
+h3 {
+  font-size: 11.6pt;
+  margin: 6mm 0 2.2mm;
+  color: #123a6b;
+}
+
+h4 { font-size: 10.5pt; margin: 4mm 0 1.5mm; }
+
+strong { color: #0b2749; }
+
+/* ---------- title page ---------- */
+
+.title-page {
+  height: 297mm;
+  padding: 30mm 26mm 22mm;
+  box-sizing: border-box;
+  position: relative;
+  page-break-after: always;
+  background: #ffffff;
+}
+
+.title-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 7mm;
+  background: #0b2749;
+}
+
+.title-page::after {
+  content: "";
+  position: absolute;
+  top: 7mm;
+  left: 0;
+  width: 34mm;
+  height: 2.2mm;
+  background: #0f766e;
+}
+
+.title-top {
+  display: flex;
+  align-items: center;
+  gap: 6mm;
+  margin-top: 8mm;
+}
+
+.title-mark {
+  width: 15mm;
+  height: 15mm;
+  border-radius: 3mm;
+  background: #123a6b;
+  color: #ffffff;
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 13pt;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-kicker {
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 9pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #52677d;
+}
+
+.title-main { margin-top: 48mm; }
+
+.title-eyebrow {
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 9.5pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #0f766e;
+  font-weight: bold;
+  margin-bottom: 6mm;
+  text-align: left;
+}
+
+.title-main h1 {
+  font-size: 31pt;
+  letter-spacing: -0.02em;
+  margin: 0 0 4mm;
+  max-width: 150mm;
+  line-height: 1.1;
+}
+
+.title-subtitle {
+  hyphens: manual;
+  font-size: 14pt;
+  line-height: 1.35;
+  color: #334e68;
+  max-width: 138mm;
+  text-align: left;
+  margin-bottom: 9mm;
+}
+
+.title-rule {
+  width: 46mm;
+  height: 1.4mm;
+  background: #0f766e;
+  margin-bottom: 8mm;
+}
+
+.title-note {
+  font-size: 10pt;
+  color: #52677d;
+  max-width: 118mm;
+  text-align: left;
+}
+
+.title-meta {
+  position: absolute;
+  left: 26mm;
+  right: 26mm;
+  bottom: 44mm;
+  display: flex;
+  gap: 12mm;
+  padding-top: 6mm;
+  border-top: 0.6pt solid #bcccdc;
+}
+
+.meta-block { flex: 1; }
+
+.meta-label {
+  display: block;
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 7.8pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #627d98;
+  margin-bottom: 2mm;
+}
+
+.meta-block p {
+  margin: 0;
+  font-size: 10.5pt;
+  text-align: left;
+}
+
+.meta-authors span {
+  display: block;
+  line-height: 1.5;
+}
+
+.title-footer {
+  position: absolute;
+  left: 26mm;
+  right: 26mm;
+  bottom: 22mm;
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 8pt;
+  color: #829ab1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  gap: 8mm;
+}
+
+/* ---------- table of contents ---------- */
+
+.toc-page { break-before: page; }
+
+.toc-page h2 {
+  border-bottom: 1.2pt solid #0f766e;
+  margin-bottom: 6mm;
+}
+
+.toc-page ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-page li { margin: 0; }
+
+.toc-page li a {
+  display: block;
+  color: #102a43;
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 9.4pt;
+  line-height: 1.45;
+  padding: 1.1mm 0;
+  border-bottom: 0.4pt dotted #c7d4e2;
+}
+
+.toc-page li a::after {
+  content: target-counter(attr(href), page);
+  float: right;
+  color: #52677d;
+  font-size: 8.8pt;
+}
+
+.toc-page .toc-l2 > a {
+  font-weight: bold;
+  color: #0b2749;
+  margin-top: 2.2mm;
+}
+
+.toc-page .toc-l3 { padding-left: 7mm; }
+
+.toc-page .toc-l3 > a {
+  font-weight: normal;
+  color: #334e68;
+  font-size: 9pt;
+}
+
+/* ---------- body ---------- */
+
+.mono, code {
+  font-family: "Liberation Mono", "DejaVu Sans Mono", monospace;
+  font-size: 0.88em;
+}
+
+p code, li code, td code {
+  background: #eef3f8;
+  padding: 0 0.6mm;
+  border-radius: 1.2mm;
+  color: #0b3d5c;
+}
+
+ul, ol {
+  margin: 0 0 0.6em 5mm;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 0.8mm;
+  text-align: left;
+}
+
+li p { margin-bottom: 0.3em; }
+
+figure {
+  margin: 5mm 0 6mm;
+  break-inside: avoid;
+  text-align: center;
+}
+
+figure img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+figcaption {
+  margin-top: 2mm;
+  font-size: 8.7pt;
+  line-height: 1.4;
+  color: #334e68;
+  text-align: left;
+}
+
+.fig-label {
+  font-family: "Liberation Sans", sans-serif;
+  font-weight: bold;
+  color: #0b2749;
+}
+
+.table-caption, .listing-caption {
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 8.8pt;
+  line-height: 1.4;
+  color: #334e68;
+  margin: 5mm 0 1.6mm;
+  text-align: left;
+  break-after: avoid;
+}
+
+.table-caption strong, .listing-caption strong { color: #0b2749; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 5mm;
+  font-family: "Liberation Sans", sans-serif;
+  font-size: 8.15pt;
+  line-height: 1.34;
+}
+
+thead { display: table-header-group; }
+
+th {
+  background: #eaf1f9;
+  color: #0b2749;
+  text-align: left;
+  font-weight: bold;
+  padding: 1.7mm 2mm;
+  border-top: 1pt solid #123a6b;
+  border-bottom: 0.7pt solid #123a6b;
+  vertical-align: bottom;
+}
+
+td {
+  padding: 1.55mm 2mm;
+  border-bottom: 0.4pt solid #d9e2ec;
+  vertical-align: top;
+}
+
+tbody tr:nth-child(even) td { background: #f8fafc; }
+
+tr { break-inside: avoid; }
+
+pre {
+  margin: 0 0 5mm;
+  padding: 3.2mm 4mm;
+  background: #f6f9fc;
+  border-left: 1.6mm solid #0f766e;
+  border-radius: 0 2mm 2mm 0;
+  font-family: "Liberation Mono", "DejaVu Sans Mono", monospace;
+  font-size: 6.9pt;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  break-inside: avoid;
+}
+
+pre code {
+  font-size: inherit;
+  background: none;
+  padding: 0;
+}
+
+blockquote {
+  margin: 4mm 0;
+  padding: 2mm 4mm;
+  border-left: 1.2mm solid #0f766e;
+  color: #334e68;
+}
+
+/* ---------- references ---------- */
+
+.references p {
+  hyphens: manual;
+  overflow-wrap: break-word;
+  font-size: 8.8pt;
+  line-height: 1.4;
+  margin: 0 0 2.2mm;
+  padding-left: 7mm;
+  text-indent: -7mm;
+  text-align: left;
+}
+
+/* ---------- print details ---------- */
+
+h2, h3 { page-break-after: avoid; }
+
+.appendix-note { font-size: 9pt; color: #52677d; }
+</style>
+</head>
+<body>
+
+<section class="title-page">
+  <div class="title-top">
+    <div class="title-mark">CR</div>
+    <div class="title-kicker">Java Full-Stack Web Application</div>
+  </div>
+
+  <div class="title-main">
+    <p class="title-eyebrow">Project Report</p>
+    <h1>Campus Resource Exchange</h1>
+    <p class="title-subtitle">A Layered Java Web Application for Peer-to-Peer Academic Resource Sharing</p>
+    <div class="title-rule"></div>
+    <p class="title-note">
+      A report on the design, implementation, and evaluation of a
+      database-backed peer-to-peer academic resource exchange.
+    </p>
+  </div>
+
+  <div class="title-meta">
+    <div class="meta-block">
+      <span class="meta-label">Prepared by</span>
+      <p class="meta-authors"><span>Shllok</span><span>Pavan</span><span>Shelly</span></p>
+    </div>
+    <div class="meta-block">
+      <span class="meta-label">Date</span>
+      <p>25 October 2026</p>
+    </div>
+    <div class="meta-block">
+      <span class="meta-label">Version</span>
+      <p>1.1</p>
+    </div>
+  </div>
+
+  <div class="title-footer">
+    <span>Jakarta EE</span>
+    <span>JDBC</span>
+    <span>MySQL 8</span>
+    <span>Tomcat 10.1</span>
+  </div>
+</section>
+
+<h2 id="abstract">Abstract</h2>
+<p>Students routinely accumulate textbooks, laboratory equipment, calculators, and course notes that become idle once a course ends, while other students on the same campus need those exact resources and find them expensive or difficult to obtain. Existing channels for redistributing such material — messaging groups, notice boards, and general classified advertisements — provide no identity verification, no structured record of an exchange, and no accountability once a transaction is agreed. This report describes the design, implementation, and evaluation of <strong>Campus Resource Exchange</strong>, a database-backed web application that supports the complete lifecycle of a peer-to-peer academic exchange: registration and administrator verification, listing and discovery, requesting, owner decisions, handover or loan tracking, and post-completion reviews.</p>
+<p>The system is deliberately constructed on a conventional Jakarta EE foundation — Jakarta Servlet 6.0, Jakarta Server Pages 3.1, JSTL 3.0, plain JDBC, and MySQL 8 — without Spring, JPA, an object-relational mapper, or a JavaScript framework. The architecture separates presentation, web control, business rules, and data access, with services owning transaction boundaries and a central filter enforcing authentication, role checks, and cross-site request forgery (CSRF) protection. Two design problems received particular attention: consistent reservation of a resource when several requests are accepted concurrently, solved with row-level locking and conditional updates inside a single database transaction; and safe deserialisation of administrator-created catalogue backups, solved with a strict <code>ObjectInputFilter</code> allowlist and validation before any insert.</p>
+<p>Evaluation combined 53 unit tests (JUnit 5 and Mockito), a 23-step end-to-end HTTP smoke suite, compilation of all 22 JSP templates, and a manual acceptance walkthrough. All 53 unit tests pass with no failures or errors; the WAR builds and deploys; and the smoke suite passes all 23 steps, including a run after restarting the application server. The final revision adds four capabilities that earlier drafts treated as future work — a fourth resource type (<em>daily essentials</em>), mandatory lending fees, catalogue sorting, and pagination — together with a JDBC connection pool, per-account login throttling, a same-site session cookie, and a CI pipeline that runs both the unit suite and the smoke suite. The report also records the defects found during verification — the deserialisation filter initially rejected primitive arrays, which silently broke every restore containing a price, and the restore path later re-applied new business rules to old backups — and discusses the residual security and scalability limitations of the version-1.1 design.</p>
+<p><strong>Keywords:</strong> Jakarta EE; servlet; JSP; JDBC; MySQL; layered architecture; peer-to-peer exchange; CSRF; deserialisation filter; software testing.</p>
+
+<section class="toc-page">
+  <h2 class="toc-title" id="contents">Contents</h2>
+  <ul><li class="toc-l2"><a href="#abstract">Abstract</a></li><li class="toc-l2"><a href="#1-introduction">1. Introduction</a></li><ul><li class="toc-l3"><a href="#11-context-and-motivation">1.1 Context and motivation</a></li><li class="toc-l3"><a href="#12-problem-statement">1.2 Problem statement</a></li><li class="toc-l3"><a href="#13-objectives">1.3 Objectives</a></li><li class="toc-l3"><a href="#14-contributions">1.4 Contributions</a></li><li class="toc-l3"><a href="#15-scope-and-delimitations">1.5 Scope and delimitations</a></li><li class="toc-l3"><a href="#16-organisation-of-the-report">1.6 Organisation of the report</a></li></ul><li class="toc-l2"><a href="#2-background-and-related-work">2. Background and related work</a></li><ul><li class="toc-l3"><a href="#21-collaborative-consumption-on-campus">2.1 Collaborative consumption on campus</a></li><li class="toc-l3"><a href="#22-existing-channels-and-their-limitations">2.2 Existing channels and their limitations</a></li><li class="toc-l3"><a href="#23-architectural-background">2.3 Architectural background</a></li><li class="toc-l3"><a href="#24-security-background">2.4 Security background</a></li><li class="toc-l3"><a href="#25-position-of-this-work">2.5 Position of this work</a></li></ul><li class="toc-l2"><a href="#3-requirements-analysis">3. Requirements analysis</a></li><ul><li class="toc-l3"><a href="#31-stakeholders-and-roles">3.1 Stakeholders and roles</a></li><li class="toc-l3"><a href="#32-functional-requirements">3.2 Functional requirements</a></li><li class="toc-l3"><a href="#33-non-functional-requirements">3.3 Non-functional requirements</a></li><li class="toc-l3"><a href="#34-principal-use-cases">3.4 Principal use cases</a></li><li class="toc-l3"><a href="#35-constraints-and-assumptions">3.5 Constraints and assumptions</a></li></ul><li class="toc-l2"><a href="#4-system-design">4. System design</a></li><ul><li class="toc-l3"><a href="#41-architectural-overview">4.1 Architectural overview</a></li><li class="toc-l3"><a href="#42-domain-model">4.2 Domain model</a></li><li class="toc-l3"><a href="#43-data-model">4.3 Data model</a></li><li class="toc-l3"><a href="#44-state-model">4.4 State model</a></li><li class="toc-l3"><a href="#45-concurrency-and-consistency-design">4.5 Concurrency and consistency design</a></li><li class="toc-l3"><a href="#46-security-design">4.6 Security design</a></li><li class="toc-l3"><a href="#47-file-handling-and-serialisation-design">4.7 File handling and serialisation design</a></li><li class="toc-l3"><a href="#48-interface-design">4.8 Interface design</a></li></ul><li class="toc-l2"><a href="#5-implementation">5. Implementation</a></li><ul><li class="toc-l3"><a href="#51-technology-stack">5.1 Technology stack</a></li><li class="toc-l3"><a href="#52-code-organisation">5.2 Code organisation</a></li><li class="toc-l3"><a href="#53-persistence-layer">5.3 Persistence layer</a></li><li class="toc-l3"><a href="#54-business-rules">5.4 Business rules</a></li><li class="toc-l3"><a href="#55-web-layer">5.5 Web layer</a></li><li class="toc-l3"><a href="#56-image-upload-and-retrieval">5.6 Image upload and retrieval</a></li><li class="toc-l3"><a href="#57-catalogue-backup-and-restore">5.7 Catalogue backup and restore</a></li><li class="toc-l3"><a href="#58-user-interface">5.8 User interface</a></li><li class="toc-l3"><a href="#59-configuration-and-deployment">5.9 Configuration and deployment</a></li></ul><li class="toc-l2"><a href="#6-testing-and-evaluation">6. Testing and evaluation</a></li><ul><li class="toc-l3"><a href="#61-strategy">6.1 Strategy</a></li><li class="toc-l3"><a href="#62-unit-test-inventory">6.2 Unit test inventory</a></li><li class="toc-l3"><a href="#63-end-to-end-suite">6.3 End-to-end suite</a></li><li class="toc-l3"><a href="#64-results">6.4 Results</a></li><li class="toc-l3"><a href="#65-defect-analysis">6.5 Defect analysis</a></li><li class="toc-l3"><a href="#66-acceptance-criteria">6.6 Acceptance criteria</a></li><li class="toc-l3"><a href="#67-threats-to-validity">6.7 Threats to validity</a></li></ul><li class="toc-l2"><a href="#7-discussion">7. Discussion</a></li><ul><li class="toc-l3"><a href="#71-design-trade-offs">7.1 Design trade-offs</a></li><li class="toc-l3"><a href="#72-security-posture">7.2 Security posture</a></li><li class="toc-l3"><a href="#73-maintainability-and-extensibility">7.3 Maintainability and extensibility</a></li><li class="toc-l3"><a href="#74-limitations">7.4 Limitations</a></li></ul><li class="toc-l2"><a href="#8-conclusion-and-future-work">8. Conclusion and future work</a></li><ul><li class="toc-l3"><a href="#81-summary">8.1 Summary</a></li><li class="toc-l3"><a href="#82-future-work">8.2 Future work</a></li></ul><li class="toc-l2"><a href="#references">References</a></li><li class="toc-l2"><a href="#appendix-a-build-and-deployment">Appendix A — Build and deployment</a></li><li class="toc-l2"><a href="#appendix-b-route-map">Appendix B — Route map</a></li><li class="toc-l2"><a href="#appendix-c-development-accounts">Appendix C — Development accounts</a></li><li class="toc-l2"><a href="#appendix-d-team-contributions">Appendix D — Team contributions</a></li></ul>
+</section>
+
+
+<h2 id="1-introduction">1. Introduction</h2>
+<h3 id="11-context-and-motivation">1.1 Context and motivation</h3>
+<p>The cost of participating in higher education extends well beyond tuition. Textbooks, laboratory kits, drawing instruments, calculators, and printed course notes are purchased for a single semester and often retain little value for the student who bought them, yet substantial value for the student who takes the same course next. At the same time, the sustainability argument for reuse is straightforward: every second-hand textbook that changes hands displaces a new copy, and every loaned piece of equipment keeps an infrequently used object in circulation rather than in storage.</p>
+<p>The wider phenomenon is usually described as <em>collaborative consumption</em> or the <em>sharing economy</em>: the organisation of access to underused goods through community-based platforms rather than through individual ownership [1]. Empirical work on participation in such systems identifies economic benefit, sustainability, and community as the main motivations [2]. A campus is an unusually favourable setting for these mechanisms because its participants are co-located, share a common institutional identity, and can complete an exchange face to face. Those same properties make a campus-specific platform more plausible than a general classified site: a student ID, a department, a course code, and a pickup location are meaningful attributes that generic marketplaces do not model.</p>
+<h3 id="12-problem-statement">1.2 Problem statement</h3>
+<p>Despite this favourable setting, the practical infrastructure is weak. Exchanges are arranged in informal messaging groups, on departmental notice boards, or through word of mouth. These channels have four recurring weaknesses:</p>
+<ol>
+<li><strong>Identity is unverified.</strong> A buyer or borrower cannot tell whether a counterpart is a current student, an alumnus, or an outsider.</li>
+<li><strong>Discovery is poor.</strong> Posts are chronological and unstructured; there is no reliable way to filter by course code, condition, exchange type, or price.</li>
+<li><strong>The exchange has no state.</strong> Once a seller and a buyer agree informally, nothing records whether the item was reserved, handed over, returned, or reviewed. Two students can believe they have reserved the same book.</li>
+<li><strong>There is no accountability.</strong> A student who repeatedly fails to return a loan leaves no trace that future counterparties can inspect.</li>
+</ol>
+<p>The problem addressed here is therefore not merely &ldquo;build a marketplace&rdquo;. It is to provide a <em>campus-scoped, verified, stateful exchange</em> in which the rules that prevent double reservation, unauthorised modification, and duplicate reviews are enforced by the application rather than by goodwill.</p>
+<h3 id="13-objectives">1.3 Objectives</h3>
+<p>The project pursued six objectives:</p>
+<ul>
+<li><strong>O1 — Architecture.</strong> Design a maintainable layered web application using only the prescribed stack: Java 17 bytecode, Jakarta Servlet 6.0, JSP 3.1, JSTL 3.0, JDBC, MySQL 8, and Apache Tomcat 10.1.</li>
+<li><strong>O2 — Lifecycle.</strong> Implement the complete exchange lifecycle for four resource types (books, laboratory equipment, study material, and daily essentials) and three exchange types (sale, loan, and donation), including request decisions, handover, loan return, and reviews.</li>
+<li><strong>O3 — Security.</strong> Enforce authentication, role-based authorisation, ownership checks, CSRF protection, secure file upload, output escaping, and safe error handling at the server.</li>
+<li><strong>O4 — Object-oriented design.</strong> Demonstrate abstraction, inheritance, polymorphism, interfaces, encapsulation, exception handling, collections, file handling, and serialisation in working code rather than in isolated examples.</li>
+<li><strong>O5 — Verification.</strong> Unit-test the business rules without a live database, exercise the deployed application end to end over HTTP, and check the result against explicit acceptance criteria.</li>
+<li><strong>O6 — Documentation.</strong> Provide reproducible instructions for database creation, configuration, build, deployment, demonstration, and backup.</li>
+</ul>
+<h3 id="14-contributions">1.4 Contributions</h3>
+<p>The work makes five concrete contributions:</p>
+<ol>
+<li>A <strong>layered reference implementation</strong> of a campus exchange in which the dependency direction is strictly presentation → web → service → data access, with no SQL in servlets and no HTML in DAOs.</li>
+<li>A <strong>transactional request-acceptance protocol</strong> that combines <code>SELECT … FOR UPDATE</code>, conditional status updates, and a single commit to make double reservation impossible under concurrent owners or requests.</li>
+<li>A <strong>defence-in-depth security design</strong> in which the central filter and the service layer independently enforce authorisation, so that a routing mistake does not silently become an access-control bypass.</li>
+<li>A <strong>restricted serialisation backup</strong> whose deserialisation path is guarded by a class allowlist, resource limits, filename validation, and item-level validation before the first database insert.</li>
+<li><strong>Empirical verification</strong> of the implementation through 53 unit tests, a 23-step end-to-end suite, and a documented acceptance checklist, including the discovery and repair of a real deserialisation defect and of a restore path that rejected older backups after a business-rule change.</li>
+</ol>
+<h3 id="15-scope-and-delimitations">1.5 Scope and delimitations</h3>
+<p>The system is a single-campus, single-instance application. Students arrange payment and pickup themselves; the application records and tracks the exchange but never processes money. Student verification is performed manually by an administrator rather than through a university identity service. The following are explicitly out of scope for version 1: online payments, real-time chat, push or email notifications, delivery logistics, recommendation algorithms, overdue reminders, password reset, email verification, and automated browser tests. These exclusions are deliberate: they keep the project within a semester-sized effort and keep the assessed technologies — servlets, JSP, JDBC, JDBC transactions, file handling, and Java serialisation — at the centre of the implementation.</p>
+<h3 id="16-organisation-of-the-report">1.6 Organisation of the report</h3>
+<p>Section 2 situates the project in the literature and in established architectural practice. Section 3 derives functional and non-functional requirements. Section 4 presents the architecture, domain model, database schema, state model, concurrency protocol, and threat model. Section 5 describes the implementation, including the security-sensitive upload and backup paths. Section 6 reports the testing strategy and results. Section 7 discusses trade-offs, residual risks, and limitations. Section 8 concludes and identifies future work.</p>
+<h2 id="2-background-and-related-work">2. Background and related work</h2>
+<h3 id="21-collaborative-consumption-on-campus">2.1 Collaborative consumption on campus</h3>
+<p>Collaborative consumption describes systems in which goods are shared, swapped, lent, or resold rather than owned exclusively [1]. Studies of sharing platforms consistently find that participants are motivated by a mixture of price, convenience, sustainability, and social connection, and that trust between strangers is the central design problem [2]. Campus exchange sits at the favourable end of this space: participants are physically close, exchanges are low-value, and institutional affiliation supplies a weak but real basis for trust. The design implication is that the platform should <em>amplify</em> that trust with verification and a visible history, rather than attempt to replace it with escrow or payment infrastructure.</p>
+<h3 id="22-existing-channels-and-their-limitations">2.2 Existing channels and their limitations</h3>
+<p>Table 2.1 compares the channels a student might use today with the proposed system. The comparison is qualitative; it is intended to justify requirements, not to report a user study.</p>
+<p class="table-caption" id="tab2-1"><strong>Table 2.1.</strong> Comparison of channels for redistributing academic resources.</p>
+
+<table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Identity</th>
+<th>Structured search</th>
+<th>Exchange state</th>
+<th>Accountability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Messaging groups</td>
+<td>Weak; display name only</td>
+<td>None</td>
+<td>Informal chat only</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Departmental notice board</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Library reserve</td>
+<td>Institutional</td>
+<td>Catalogue only</td>
+<td>Loan record</td>
+<td>Fines, but no peer review</td>
+</tr>
+<tr>
+<td>General classified site</td>
+<td>Email/phone only</td>
+<td>Good</td>
+<td>Weak</td>
+<td>Ratings, not campus-specific</td>
+</tr>
+<tr>
+<td><strong>Campus Resource Exchange</strong></td>
+<td><strong>Administrator-verified student ID</strong></td>
+<td><strong>Course, type, condition, price</strong></td>
+<td><strong>Request, transaction, loan, return</strong></td>
+<td><strong>Reviews tied to completed transactions</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The table makes the gap explicit. General marketplaces solve discovery but not campus identity or the academic attributes that matter (course code, department, pickup point). Messaging groups solve familiarity but not state. The proposed system combines verified campus identity, academic metadata, and an explicit exchange lifecycle.</p>
+<h3 id="23-architectural-background">2.3 Architectural background</h3>
+<p>The implementation follows the Model–View–Controller interpretation known as <em>Model 2</em> for Java web applications: servlets act as controllers, JSP templates render views, and domain objects plus services form the model. This separation is an application of the broader layered architectural pattern, in which each layer depends only on the layer beneath it and knowledge of the database is confined to the data-access layer [4]. The data-access object (DAO) pattern isolates SQL and JDBC mapping behind an interface-like class boundary, so that business rules operate on domain objects rather than on <code>ResultSet</code> rows [4].</p>
+<p>The design also uses several patterns catalogued by Gamma <em>et al.</em> [3]: the <strong>Template Method</strong> in the abstract <code>BaseServlet</code>, which fixes the request-handling skeleton and leaves routing to subclasses; the <strong>Factory Method</strong> in <code>ResourceService.newResource</code>, which returns the correct <code>Resource</code> subclass for a type; the <strong>Strategy</strong>-like use of the <code>Searchable</code> interface for catalogue matching; and the <strong>Data Transfer Object</strong> in the serialisable backup classes, which decouple the persisted representation from the live domain model.</p>
+<h3 id="24-security-background">2.4 Security background</h3>
+<p>Web application security was treated as a design constraint rather than an afterthought. The OWASP Top 10 identifies broken access control, injection, insecure design, security misconfiguration, and software and data integrity failures as the most consequential risk categories [15]. Each maps directly onto a decision in this project: authorisation is checked twice (filter and service); every SQL statement is parameterised; secrets are supplied through the environment; and serialised data is treated as untrusted even when an administrator uploaded it.</p>
+<p>Three specific mechanisms deserve mention. Password storage uses BCrypt, a deliberately slow, salted hash designed to resist offline guessing [5]. CSRF defence uses the synchroniser-token pattern recommended by OWASP [6]: a random token bound to the session is required on every state-changing request. File upload follows the OWASP guidance to validate content rather than trust the filename, generate server-side names, store files outside the web root, and serve them through a controlled handler [7]. Java deserialisation is a well-known remote-code-execution vector when untrusted streams are accepted; the mitigation used here is a JVM <code>ObjectInputFilter</code> allowlist plus validation, following OWASP&rsquo;s deserialisation guidance [8].</p>
+<h3 id="25-position-of-this-work">2.5 Position of this work</h3>
+<p>The project does not claim to advance sharing-economy theory or to outperform commercial marketplaces. Its contribution is an <em>engineering</em> one: a complete, auditable, framework-free implementation of a stateful campus exchange, with explicit attention to concurrency, authorisation, and deserialisation safety, verified against a stated acceptance list. That makes it useful both as a teaching artefact for Jakarta EE and as a worked example of how far a small set of well-understood patterns can carry a realistic application.</p>
+<h2 id="3-requirements-analysis">3. Requirements analysis</h2>
+<h3 id="31-stakeholders-and-roles">3.1 Stakeholders and roles</h3>
+<p>The system recognises two authenticated roles and one unauthenticated visitor (Table 3.1). The visitor may browse the catalogue but may not list, request, or review. A student account begins in the <code>PENDING</code> verification state and must be verified by an administrator before it can create listings or submit requests. An administrator can verify or reject students, suspend accounts, moderate listings, inspect activity, and create or restore catalogue backups.</p>
+<p class="table-caption" id="tab3-1"><strong>Table 3.1.</strong> Stakeholders and responsibilities.</p>
+
+<table>
+<thead>
+<tr>
+<th>Stakeholder</th>
+<th>Authentication</th>
+<th>Principal capabilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Visitor</td>
+<td>None</td>
+<td>Browse and search available listings; view listing details</td>
+</tr>
+<tr>
+<td>Student (pending)</td>
+<td>Email + password</td>
+<td>Edit profile; browse; cannot list or request until verified</td>
+</tr>
+<tr>
+<td>Student (verified)</td>
+<td>Email + password</td>
+<td>List, edit, deactivate; request; accept or reject incoming requests; track exchanges; review completed exchanges</td>
+</tr>
+<tr>
+<td>Administrator</td>
+<td>Email + password</td>
+<td>Verify or reject students; suspend or reactivate accounts; moderate listings; view requests, transactions, and reviews; create and restore backups</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-functional-requirements">3.2 Functional requirements</h3>
+<p>Table 3.2 summarises the functional requirements. Priorities use the MoSCoW convention: <strong>M</strong> (must), <strong>S</strong> (should), and <strong>C</strong> (could). All must-have requirements were implemented; the should-have and could-have items are identified so that the scope boundary is explicit.</p>
+<p class="table-caption" id="tab3-2"><strong>Table 3.2.</strong> Functional requirements.</p>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-01</td>
+<td>A visitor can register with name, email, student ID, password, department, and year of study.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-02</td>
+<td>A registered user can log in, log out, and edit their profile.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-03</td>
+<td>An administrator can verify or reject a pending student and suspend or reactivate an account.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-04</td>
+<td>A verified student can create, edit, and deactivate a listing with title, description, category (chosen from existing categories or created inline), type, condition, exchange type, a price or lending fee, loan terms, course code, pickup location, and an optional image.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-05</td>
+<td>Any visitor can browse and search available listings by keyword, category, course code, pickup location, type, condition, exchange type, and price range, and sort the result by price or condition.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-06</td>
+<td>A verified student can request an available listing with an optional message.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-07</td>
+<td>The owner can accept or reject a pending request; the requester can cancel one.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-08</td>
+<td>Accepting a request creates exactly one transaction and reserves the resource atomically.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-09</td>
+<td>A sale or donation can be completed at handover; a loan can be started and later returned.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-10</td>
+<td>The requester can submit one review with a rating of 1–5 after a transaction is completed.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-11</td>
+<td>An administrator can view summary statistics, users, listings, requests, transactions, and reviews.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-12</td>
+<td>An administrator can create a serialised catalogue backup and restore it additively.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>FR-13</td>
+<td>The catalogue and dashboards show useful empty states and flash messages for every action.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>FR-14</td>
+<td>The interface adapts to mobile and desktop widths and uses accessible labels and contrast.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>FR-15</td>
+<td>The catalogue is paginated so that page size stays bounded as the number of listings grows.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>FR-16</td>
+<td>A lending listing must carry a positive lending fee; a sale must carry a positive price; a donation is free.</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-non-functional-requirements">3.3 Non-functional requirements</h3>
+<p>Table 3.3 states the non-functional requirements and, importantly, how each was to be verified. Requirements without a verification method tend to become aspirations; tying each to a test or an inspection kept the evaluation honest.</p>
+<p class="table-caption" id="tab3-3"><strong>Table 3.3.</strong> Non-functional requirements and verification.</p>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Verification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-01</td>
+<td><strong>Security:</strong> no plaintext passwords; no SQL string concatenation; no unescaped user output; no arbitrary file access.</td>
+<td>Code inspection, unit tests, smoke checks</td>
+</tr>
+<tr>
+<td>NFR-02</td>
+<td><strong>Integrity:</strong> concurrent acceptance cannot reserve one resource twice or create two transactions for one request.</td>
+<td>Unit tests with mocked conditional updates; schema uniqueness</td>
+</tr>
+<tr>
+<td>NFR-03</td>
+<td><strong>Usability:</strong> every action produces a success or error message; empty states are explicit.</td>
+<td>Manual walkthrough</td>
+</tr>
+<tr>
+<td>NFR-04</td>
+<td><strong>Accessibility:</strong> semantic labels, visible focus, sufficient contrast, keyboard-operable navigation.</td>
+<td>Markup inspection</td>
+</tr>
+<tr>
+<td>NFR-05</td>
+<td><strong>Maintainability:</strong> servlets contain no SQL; DAOs contain no HTML; services own transactions.</td>
+<td>Package inspection</td>
+</tr>
+<tr>
+<td>NFR-06</td>
+<td><strong>Portability:</strong> configuration comes from environment variables; the WAR contains no secrets.</td>
+<td>Deployment test</td>
+</tr>
+<tr>
+<td>NFR-07</td>
+<td><strong>Testability:</strong> business rules can be tested without a live MySQL server.</td>
+<td><code>mvn clean test</code> with no database</td>
+</tr>
+<tr>
+<td>NFR-08</td>
+<td><strong>Deployability:</strong> the project builds with Maven and deploys to Tomcat 10.1.</td>
+<td><code>mvn package</code>; deployment log</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-principal-use-cases">3.4 Principal use cases</h3>
+<p>Table 3.4 lists the use cases that structure the implementation and the acceptance tests. The central flow — request, accept, hand over, review — is the one that exercises the most layers and the most state transitions, and it is therefore the subject of the sequence diagram in Section 4.5.</p>
+<p class="table-caption" id="tab3-4"><strong>Table 3.4.</strong> Principal use cases.</p>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Use case</th>
+<th>Primary actor</th>
+<th>Successful outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UC-01</td>
+<td>Register and await verification</td>
+<td>Visitor</td>
+<td>A pending student account exists; an administrator can verify it</td>
+</tr>
+<tr>
+<td>UC-02</td>
+<td>List a resource</td>
+<td>Verified student</td>
+<td>An available listing with validated exchange fields is stored</td>
+</tr>
+<tr>
+<td>UC-03</td>
+<td>Search and view a listing</td>
+<td>Any visitor</td>
+<td>Matching available listings and full details are displayed</td>
+</tr>
+<tr>
+<td>UC-04</td>
+<td>Request, accept, and complete a sale</td>
+<td>Student, owner</td>
+<td>One transaction is created; the resource becomes unavailable</td>
+</tr>
+<tr>
+<td>UC-05</td>
+<td>Lend and return a resource</td>
+<td>Owner, requester</td>
+<td>The resource moves through reserved, lent, and available states</td>
+</tr>
+<tr>
+<td>UC-06</td>
+<td>Review a completed exchange</td>
+<td>Requester</td>
+<td>One review is stored and shown on the owner&rsquo;s listings</td>
+</tr>
+<tr>
+<td>UC-07</td>
+<td>Verify a student and moderate content</td>
+<td>Administrator</td>
+<td>Account or listing state changes; audit views reflect it</td>
+</tr>
+<tr>
+<td>UC-08</td>
+<td>Back up and restore the catalogue</td>
+<td>Administrator</td>
+<td>A <code>.ser</code> file is written; restore adds only new listings</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-constraints-and-assumptions">3.5 Constraints and assumptions</h3>
+<p>The implementation was constrained by the assignment brief: Java 17 bytecode; Maven WAR packaging; Tomcat 10.1 with the <code>jakarta.*</code> namespace; JSP and JSTL rather than a templating framework; JDBC and the DAO pattern rather than an ORM; MySQL 8 as the system of record; BCrypt for passwords; and JUnit for tests. The environment assumed a single Tomcat instance, a local MySQL server, and a filesystem shared by the application and its upload/backup directories.</p>
+<p>Two assumptions are worth stating. First, the administrator is trusted to verify students honestly; the system records the decision but cannot independently confirm enrolment. Second, students are trusted to describe an item accurately; the review mechanism provides reputational pressure after the fact, not a guarantee before it. Both assumptions are normal for a campus marketplace and are revisited in Section 7.4.</p>
+<h2 id="4-system-design">4. System design</h2>
+<h3 id="41-architectural-overview">4.1 Architectural overview</h3>
+<p>Figure 1 shows the layered structure. A browser request enters through <code>SecurityFilter</code>, which establishes UTF-8 encoding, sets defensive response headers, ensures a session and CSRF token, reloads the authenticated user from the database, rejects invalid CSRF tokens, and enforces public/authenticated/student/administrator routing. The request then reaches one of ten servlet controllers, which parse parameters, call a service, place results in request attributes, and forward to a JSP under <code>WEB-INF/views</code>. Services apply business rules and own transaction boundaries; DAOs issue parameterised SQL through JDBC; MySQL is the system of record.</p>
+<figure id="fig1">
+  <img src="figures/fig1-architecture.svg" alt="Layered architecture diagram">
+  <figcaption><span class="fig-label">Figure 1.</span> Layered architecture. Dependencies point downwards; views are reached only through servlets, and file storage sits outside the deployable WAR.</figcaption>
+</figure>
+
+<p>Three properties of this arrangement matter. First, <strong>JSPs are not directly reachable</strong>: they live under <code>WEB-INF</code>, so a browser cannot bypass the controller and render a page with missing data. Second, <strong>dependencies point downwards</strong>: a servlet may call a service, a service may call a DAO, but a DAO never calls a servlet and a JSP never queries the database. Third, <strong>transaction boundaries sit in the service layer</strong>, because only the service knows which combination of DAO calls constitutes one business operation. This is the standard division of responsibility in layered enterprise applications [4].</p>
+<p>Cross-cutting configuration is centralised in <code>AppConfig</code>, which reads <code>DB_URL</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>, <code>DB_POOL_SIZE</code>, <code>UPLOAD_DIR</code>, and <code>BACKUP_DIR</code> from environment variables or JVM system properties. Nothing secret is compiled into the WAR, and startup fails loudly if <code>DB_PASSWORD</code> is absent rather than silently connecting with a default.</p>
+<h3 id="42-domain-model">4.2 Domain model</h3>
+<p>Figure 2 shows the principal domain classes. <code>User</code> is abstract and holds the account state shared by <code>Student</code> and <code>Admin</code>; its abstract methods <code>getDashboardPath()</code> and <code>getRoleLabel()</code> are implemented differently by the two subclasses, which is the clearest working example of polymorphism in the system. <code>Resource</code> is abstract and holds the listing fields common to <code>Book</code>, <code>LabEquipment</code>, <code>StudyMaterial</code>, and <code>DailyEssential</code>; its abstract <code>displayDetails()</code> method is overridden by each subclass, and the catalogue calls it through a <code>Resource</code> reference. <code>Resource</code> implements <code>Searchable</code>, while the concrete resource types implement <code>Sellable</code> and <code>Lendable</code>, which expose sale-price and loan-period behaviour. <code>DailyEssential</code> implements both interfaces, which is why a calculator or a hostel mattress can be sold or lent without adding a new rule.</p>
+<figure id="fig2">
+  <img src="figures/fig2-domain.svg" alt="Domain class diagram">
+  <figcaption><span class="fig-label">Figure 2.</span> Principal domain classes and relationships. The diagram omits accessors and most fields; the full model is in <span class="mono">src/main/java/com/campus/exchange/model</span>.</figcaption>
+</figure>
+
+<p>Table 4.1 maps the required object-oriented concepts to their concrete locations. The mapping is included because the project brief treats these concepts as assessable outcomes, and because it exposes a design choice: inheritance is used where the <em>behaviour</em> differs (dashboard routing, detail rendering, loan period), not merely to create a class hierarchy.</p>
+<p class="table-caption" id="tab4-1"><strong>Table 4.1.</strong> Object-oriented concepts and their implementation.</p>
+
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Abstraction</td>
+<td><code>User</code> and <code>Resource</code> are abstract; servlets and services depend on these types rather than on subclasses</td>
+</tr>
+<tr>
+<td>Inheritance</td>
+<td><code>Student</code> and <code>Admin</code> extend <code>User</code>; <code>Book</code>, <code>LabEquipment</code>, <code>StudyMaterial</code>, and <code>DailyEssential</code> extend <code>Resource</code></td>
+</tr>
+<tr>
+<td>Polymorphism</td>
+<td><code>getDashboardPath()</code> and <code>getRoleLabel()</code> dispatch per account type; <code>displayDetails()</code> renders per resource type; <code>ResourceService.newResource(type)</code> constructs the correct subclass</td>
+</tr>
+<tr>
+<td>Interfaces</td>
+<td><code>Sellable</code> exposes the sale price; <code>Lendable</code> exposes the loan period; <code>Searchable</code> exposes keyword matching; <code>DailyEssential</code> implements both <code>Sellable</code> and <code>Lendable</code></td>
+</tr>
+<tr>
+<td>Encapsulation</td>
+<td>Private fields with accessors; services normalise exchange-specific fields (for example, a donation always clears the price)</td>
+</tr>
+<tr>
+<td>Exception handling</td>
+<td><code>AppException</code> hierarchy (<code>ValidationException</code>, <code>NotFoundException</code>, <code>AccessDeniedException</code>, <code>ConflictException</code>) with user-safe messages</td>
+</tr>
+<tr>
+<td>Collections</td>
+<td><code>List&lt;Resource&gt;</code>, <code>List&lt;ResourceRequest&gt;</code>, <code>List&lt;Transaction&gt;</code>, and <code>List&lt;Review&gt;</code> flow from DAOs through services to JSPs; a <code>Map&lt;Integer, String&gt;</code> supplies owner names in the admin listing view</td>
+</tr>
+<tr>
+<td>Serialisation</td>
+<td><code>ResourceCatalogBackup</code> and <code>ResourceBackupItem</code> implement <code>Serializable</code>; a filter constrains deserialisation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-data-model">4.3 Data model</h3>
+<p>Figure 3 presents the entity–relationship model. Five tables preserve the required entities and relationships: <code>users</code>, <code>resources</code>, <code>resource_requests</code>, <code>exchange_transactions</code>, and <code>reviews</code>. The schema is defined in <code>database/schema.sql</code> and uses InnoDB, foreign keys, unique constraints, check constraints, and indexes.</p>
+<figure id="fig3">
+  <img src="figures/fig3-er.svg" alt="Entity relationship diagram">
+  <figcaption><span class="fig-label">Figure 3.</span> Entity–relationship model. Foreign keys use <span class="mono">ON DELETE RESTRICT</span> so that historical exchanges cannot be destroyed by deleting an account.</figcaption>
+</figure>
+
+<p>Table 4.2 summarises each table and its integrity rules. Three constraints deserve emphasis. <code>resource_requests</code> may contain many rows for one resource, but <code>exchange_transactions.request_id</code> is unique, so an accepted request can produce at most one transaction. <code>reviews.transaction_id</code> is also unique, so a transaction can be reviewed at most once. And <code>users.email</code> plus <code>users.student_id</code> are unique, so registration cannot create duplicate identities even if two requests race past the application-level check.</p>
+<p class="table-caption" id="tab4-2"><strong>Table 4.2.</strong> Database tables and integrity constraints.</p>
+
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Purpose</th>
+<th>Keys and constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users</code></td>
+<td>Accounts and verification state</td>
+<td>PK <code>user_id</code>; unique <code>email</code>, <code>student_id</code>; enum <code>role</code>, <code>verification_status</code>; check <code>year_of_study</code> between 1 and 8</td>
+</tr>
+<tr>
+<td><code>resources</code></td>
+<td>Listings</td>
+<td>PK <code>resource_id</code>; FK <code>owner_id</code> → <code>users</code>; enum type (<code>BOOK</code>, <code>LAB_EQUIPMENT</code>, <code>STUDY_MATERIAL</code>, <code>DAILY_ESSENTIAL</code>), condition, exchange type, status; check <code>price &gt;= 0</code>; indexes on status/type/condition, course, owner, price</td>
+</tr>
+<tr>
+<td><code>resource_requests</code></td>
+<td>Requests for a listing</td>
+<td>PK <code>request_id</code>; FKs <code>resource_id</code>, <code>requester_id</code>; enum status; indexes on resource/status and requester/status</td>
+</tr>
+<tr>
+<td><code>exchange_transactions</code></td>
+<td>Accepted exchanges</td>
+<td>PK <code>transaction_id</code>; unique FK <code>request_id</code>; FKs <code>owner_id</code>, <code>requester_id</code>; enum status; timestamps for creation, completion, and return</td>
+</tr>
+<tr>
+<td><code>reviews</code></td>
+<td>Post-completion ratings</td>
+<td>PK <code>review_id</code>; unique FK <code>transaction_id</code>; FK <code>reviewer_id</code>; check <code>rating</code> between 1 and 5</td>
+</tr>
+</tbody>
+</table>
+<p>Enumerations are stored as MySQL <code>ENUM</code> columns and mirrored by Java enums. Storing the symbolic name rather than an ordinal keeps dumps readable and avoids silent corruption if an enum is reordered. The trade-off is that adding a new value requires a schema change; this is acceptable for a small, stable domain and is discussed in Section 7.3. Because a destructively re-run <code>schema.sql</code> is not an acceptable upgrade path for a live database, the repository now carries numbered scripts under <code>database/migrations/</code>; <code>001_add_daily_essential.sql</code> is the change that accompanied the fourth resource type.</p>
+<h3 id="44-state-model">4.4 State model</h3>
+<p>Figure 4 shows the three interacting lifecycles. A resource begins <code>AVAILABLE</code>; acceptance moves it to <code>RESERVED</code>; a completed sale or donation moves it to <code>UNAVAILABLE</code>; a started loan moves it to <code>LENT</code>, and a return moves it back to <code>AVAILABLE</code> unless an administrator deactivated it during the loan, in which case it remains <code>INACTIVE</code>. A request begins <code>PENDING</code> and moves to <code>ACCEPTED</code>, <code>REJECTED</code>, or <code>CANCELLED</code>; completion of the exchange moves an accepted request to <code>COMPLETED</code>. A transaction begins <code>PENDING_HANDOVER</code>; a sale or donation completes directly, while a loan passes through <code>ACTIVE_LOAN</code> before completion.</p>
+<figure id="fig4">
+  <img src="figures/fig4-states.svg" alt="Lifecycle state diagram">
+  <figcaption><span class="fig-label">Figure 4.</span> Resource, request, and transaction lifecycles. Transitions are rejected unless the current state is the one shown; the <span class="mono">OVERDUE</span> state is deliberately not implemented.</figcaption>
+</figure>
+
+<p>Table 4.3 states the guard for each transition and the layer that enforces it. Every transition is checked twice: once in the service against the object read from the database, and once by a conditional <code>UPDATE … WHERE status = ?</code>, which affects zero rows if another transaction changed the state in between. The second check is what makes the protocol safe under concurrency.</p>
+<p class="table-caption" id="tab4-3"><strong>Table 4.3.</strong> Lifecycle transitions and guards.</p>
+
+<table>
+<thead>
+<tr>
+<th>Transition</th>
+<th>Guard</th>
+<th>Enforced by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource <code>AVAILABLE → RESERVED</code></td>
+<td>Request is pending and the owner accepts</td>
+<td><code>RequestService.acceptRequest</code>, conditional update</td>
+</tr>
+<tr>
+<td>Request <code>PENDING → ACCEPTED</code></td>
+<td>Owner matches and resource is available</td>
+<td>Same transaction</td>
+</tr>
+<tr>
+<td>Transaction created</td>
+<td>Exactly one per accepted request</td>
+<td><code>TransactionDAO.insert</code> and unique <code>request_id</code></td>
+</tr>
+<tr>
+<td>Resource <code>RESERVED → UNAVAILABLE</code></td>
+<td>Sale or donation handover completed</td>
+<td><code>TransactionService.completeHandover</code></td>
+</tr>
+<tr>
+<td>Resource <code>RESERVED → LENT</code></td>
+<td>Loan started by the owner</td>
+<td><code>TransactionService.markLent</code></td>
+</tr>
+<tr>
+<td>Resource <code>LENT → AVAILABLE</code></td>
+<td>Loan returned and listing still active</td>
+<td><code>TransactionService.markReturned</code></td>
+</tr>
+<tr>
+<td>Request <code>PENDING → REJECTED/CANCELLED</code></td>
+<td>Actor is the owner/requester and request is pending</td>
+<td><code>rejectRequest</code>, <code>cancelRequest</code></td>
+</tr>
+<tr>
+<td>Transaction <code>… → COMPLETED</code></td>
+<td>Handover completed or loan returned</td>
+<td><code>TransactionService</code></td>
+</tr>
+<tr>
+<td>Review created</td>
+<td>Requester, transaction completed, none existing</td>
+<td><code>ReviewService</code> and unique <code>transaction_id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="45-concurrency-and-consistency-design">4.5 Concurrency and consistency design</h3>
+<p>The most important correctness requirement is that two owners — or two requests for the same listing — must not both reserve the same resource. The schema cannot express this with a simple unique constraint, because a resource may legitimately have many requests but at most one reservation. MySQL also lacks partial indexes, so the rule must be enforced by the transaction protocol.</p>
+<p>The protocol in <code>RequestService.acceptRequest</code> is as follows (Listing 1):</p>
+<ol>
+<li>Open a connection with <code>autoCommit = false</code>.</li>
+<li>Lock the request row with <code>SELECT … FOR UPDATE</code>.</li>
+<li>Lock the resource row with <code>SELECT … FOR UPDATE</code>.</li>
+<li>Check that the actor owns the resource, the request is still <code>PENDING</code>, and the resource is <code>AVAILABLE</code>.</li>
+<li>Update the resource conditionally from <code>AVAILABLE</code> to <code>RESERVED</code>.</li>
+<li>Update the request conditionally from <code>PENDING</code> to <code>ACCEPTED</code>.</li>
+<li>Insert the transaction, then commit.</li>
+</ol>
+<p>Because the request row is locked first, two concurrent acceptances of the <em>same</em> request serialise immediately. Two acceptances of <em>different</em> requests for the same resource serialise on the resource row: the second waits, then observes <code>RESERVED</code> and fails with a conflict. The conditional updates provide a second line of defence if isolation is weakened or a future refactor removes a lock. Figure 5 shows the successful path as a sequence diagram.</p>
+<figure id="fig5">
+  <img src="figures/fig5-sequence.svg" alt="Sequence diagram for request acceptance">
+  <figcaption><span class="fig-label">Figure 5.</span> Accepting a request. Guards and both conditional updates run inside one database transaction; any failure rolls back the whole exchange.</figcaption>
+</figure>
+
+<p class="listing-caption" id="lst1"><strong>Listing 1.</strong> Transactional acceptance with row locks and conditional updates (<span class="mono">RequestService.java</span>, abridged).</p>
+
+<pre><code class="language-java">ResourceRequest request = requestDAO.findByIdForUpdate(conn, requestId);
+if (request == null) throw new NotFoundException(&quot;Request not found.&quot;);
+Resource resource = resourceDAO.findByIdForUpdate(conn, request.getResourceId());
+if (resource.getOwnerId() != ownerId)
+    throw new AccessDeniedException(&quot;Only the resource owner can accept this request.&quot;);
+if (request.getStatus() != RequestStatus.PENDING)
+    throw new ConflictException(&quot;Only pending requests can be accepted.&quot;);
+if (resource.getStatus() != ResourceStatus.AVAILABLE)
+    throw new ConflictException(&quot;This resource is no longer available.&quot;);
+
+if (!resourceDAO.updateStatusIfCurrent(conn, resource.getResourceId(),
+        ResourceStatus.AVAILABLE, ResourceStatus.RESERVED))
+    throw new ConflictException(&quot;This resource was reserved by another request.&quot;);
+if (!requestDAO.updateStatusIfCurrent(conn, requestId,
+        RequestStatus.PENDING, RequestStatus.ACCEPTED))
+    throw new ConflictException(&quot;This request is no longer pending.&quot;);
+
+Transaction transaction = new Transaction();
+transaction.setRequestId(requestId);
+transaction.setOwnerId(ownerId);
+transaction.setRequesterId(request.getRequesterId());
+transaction.setExchangeType(resource.getExchangeType());
+transaction.setStatus(TransactionStatus.PENDING_HANDOVER);
+return transactionDAO.insert(conn, transaction);
+</code></pre>
+<h3 id="46-security-design">4.6 Security design</h3>
+<p>Table 4.4 organises the security design using the STRIDE categories. The table is deliberately blunt about residual risk: a design table that claims every threat is eliminated is not credible. The most significant gaps are the absence of rate limiting, multi-factor authentication, encryption of backup files, and an independent audit log.</p>
+<p class="table-caption" id="tab4-4"><strong>Table 4.4.</strong> Threat model and implemented controls.</p>
+
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Example</th>
+<th>Controls</th>
+<th>Residual risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spoofing</td>
+<td>Guessing another user&rsquo;s credentials; session fixation</td>
+<td>BCrypt cost 12; <code>changeSessionId()</code> on login; HttpOnly session cookie; session invalidation on logout</td>
+<td>No MFA or login throttling</td>
+</tr>
+<tr>
+<td>Tampering</td>
+<td>Posting another owner&rsquo;s resource ID; changing a price or status in the form</td>
+<td>Server-side validation; ownership checks in services; conditional updates; CSRF token on POST</td>
+<td>A compromised browser can still submit valid requests</td>
+</tr>
+<tr>
+<td>Repudiation</td>
+<td>Denying that a request was accepted</td>
+<td>Database timestamps and status history in the transaction row</td>
+<td>No separate immutable audit log</td>
+</tr>
+<tr>
+<td>Information disclosure</td>
+<td>Reading another student&rsquo;s requests; leaking stack traces</td>
+<td>Authorisation checks; JSP escaping; generic error pages; no SQL errors shown</td>
+<td>Backup files are unencrypted on disk</td>
+</tr>
+<tr>
+<td>Denial of service</td>
+<td>Uploading a huge file; flooding requests</td>
+<td>5 MB image limit; request-size limit; indexed queries</td>
+<td>No rate limiting or account lockout</td>
+</tr>
+<tr>
+<td>Elevation of privilege</td>
+<td>Forging an admin role in a request</td>
+<td>Role is read from the database, never from the request; filter and service both check</td>
+<td>A single administrator role has broad powers</td>
+</tr>
+</tbody>
+</table>
+<p>Two design choices are worth highlighting. First, <strong>authorisation is duplicated on purpose</strong>. <code>SecurityFilter</code> blocks <code>/admin/*</code> for non-admins and student-only paths for admins, but services such as <code>ResourceService.update</code>, <code>RequestService.acceptRequest</code>, and <code>TransactionService.markReturned</code> re-check ownership and role. This is defence in depth: if a new route is added without a filter update, the service remains the final authority. Second, <strong>the browser is never trusted for identity or state</strong>. The session stores only the user ID and role for display; on every request the filter reloads the user from the database and re-derives <code>isActive()</code> and <code>isVerified()</code>, so a suspended account loses access immediately.</p>
+<h3 id="47-file-handling-and-serialisation-design">4.7 File handling and serialisation design</h3>
+<p>Listing images are stored outside the deployable WAR, in a configurable upload directory. The database stores only the generated filename, never an absolute path. Retrieval goes through <code>ImageServlet</code>, which accepts only names matching the UUID-plus-extension pattern, normalises the path, verifies that the resolved path is still inside the upload directory, and checks that the file exists before streaming it. This design removes the two classic upload failures: a browser-supplied filename containing <code>../</code>, and a request that asks the server to read an arbitrary file.</p>
+<p>Catalogue backups use Java serialisation, as required by the brief. <code>ResourceCatalogBackup</code> contains a list of <code>ResourceBackupItem</code> objects; each item stores the listing fields needed for restoration and deliberately excludes users, password hashes, and session data. Backups are written to a configurable backup directory with a timestamped filename. Restore is <em>additive</em>: an item whose owner and title already exist is skipped, and only new items are inserted, all inside one transaction. The deserialisation path is the security-sensitive part and is described in Section 5.7.</p>
+<h3 id="48-interface-design">4.8 Interface design</h3>
+<p>The interface is built from 22 JSP/JSPF templates, a single 1,173-line stylesheet, and a 45-line JavaScript file that only toggles mobile navigation. The visual language is a light background with dark navy and teal accents, consistent spacing, status badges, and explicit empty states. Pages are server-rendered; JavaScript does not perform validation or business logic. The layout is responsive: the catalogue uses a card grid that collapses to one column on narrow screens, forms use full-width controls, and tables scroll horizontally rather than forcing the page wider than the viewport.</p>
+<h2 id="5-implementation">5. Implementation</h2>
+<h3 id="51-technology-stack">5.1 Technology stack</h3>
+<p>Table 5.1 records the stack and versions actually used. The versions are part of the result: the <code>jakarta.*</code> namespace and Tomcat 10.1 are not interchangeable with older <code>javax.servlet</code> deployments. The implementation targets the Jakarta Servlet 6.0 [9] and Jakarta Server Pages 3.1 [16] specifications, is deployed on Tomcat 10.1 [10], and relies on the MySQL 8 reference behaviour [11] and the JDBC API [12] for persistence and transaction control.</p>
+<p class="table-caption" id="tab5-1"><strong>Table 5.1.</strong> Technology stack.</p>
+
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Version</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java (bytecode target)</td>
+<td>17</td>
+<td>Language level; built and run with JDK 21.0.12</td>
+</tr>
+<tr>
+<td>Jakarta Servlet API</td>
+<td>6.0.0</td>
+<td>Controllers and filter</td>
+</tr>
+<tr>
+<td>Jakarta Server Pages API</td>
+<td>3.1.1</td>
+<td>View templates</td>
+</tr>
+<tr>
+<td>JSTL (API and implementation)</td>
+<td>3.0.0 / 3.0.1</td>
+<td>Iteration, conditionals, escaping</td>
+</tr>
+<tr>
+<td>Apache Tomcat</td>
+<td>10.1.55</td>
+<td>Servlet container</td>
+</tr>
+<tr>
+<td>MySQL</td>
+<td>8.4.11</td>
+<td>Persistent store</td>
+</tr>
+<tr>
+<td>MySQL Connector/J</td>
+<td>9.1.0</td>
+<td>JDBC driver</td>
+</tr>
+<tr>
+<td>HikariCP</td>
+<td>5.1.0</td>
+<td>JDBC connection pool</td>
+</tr>
+<tr>
+<td>jBCrypt</td>
+<td>0.4</td>
+<td>Password hashing (cost 12)</td>
+</tr>
+<tr>
+<td>JUnit Jupiter</td>
+<td>5.11.4</td>
+<td>Unit tests</td>
+</tr>
+<tr>
+<td>Mockito</td>
+<td>5.15.2</td>
+<td>Test doubles</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td>3.9.12</td>
+<td>Build and WAR packaging</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-code-organisation">5.2 Code organisation</h3>
+<p>Table 5.2 summarises the source tree. The main Java sources total about 5,750 lines across 65 files; tests add about 1,220 lines across 7 classes; the JSP templates add about 1,900 lines. The package boundaries follow the architecture, and the small <code>backup</code> package exists because the serialisable DTOs must not be the live domain objects.</p>
+<p class="table-caption" id="tab5-2"><strong>Table 5.2.</strong> Package structure and size.</p>
+
+<table>
+<thead>
+<tr>
+<th>Package / directory</th>
+<th>Files</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>model</code> (including <code>enums</code>)</td>
+<td>22</td>
+<td>Domain classes, enums, and the three interfaces</td>
+</tr>
+<tr>
+<td><code>dao</code></td>
+<td>6</td>
+<td>JDBC queries, row mapping, search criteria</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td>7</td>
+<td>Business rules and transaction boundaries</td>
+</tr>
+<tr>
+<td><code>controller</code></td>
+<td>12</td>
+<td>Ten servlets, the shared <code>BaseServlet</code>, and the startup listener</td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td>1</td>
+<td>Authentication, authorisation, CSRF, and headers</td>
+</tr>
+<tr>
+<td><code>util</code></td>
+<td>10</td>
+<td>Configuration, pooled connection, validation, BCrypt, uploads, flash, CSRF, JDBC helpers</td>
+</tr>
+<tr>
+<td><code>exception</code></td>
+<td>5</td>
+<td><code>AppException</code> and four semantic subclasses</td>
+</tr>
+<tr>
+<td><code>backup</code></td>
+<td>2</td>
+<td>Serialisable catalogue DTOs</td>
+</tr>
+<tr>
+<td><code>WEB-INF/views</code></td>
+<td>22 JSPs + 3 fragments</td>
+<td>JSP pages and shared header, footer, and message fragments</td>
+</tr>
+<tr>
+<td><code>assets</code></td>
+<td>2</td>
+<td>One stylesheet and one small JavaScript file</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-persistence-layer">5.3 Persistence layer</h3>
+<p>Every DAO uses <code>PreparedStatement</code>, <code>try-with-resources</code>, and explicit column lists. Connections come from a HikariCP pool (<code>DB_POOL_SIZE</code>, default 10) rather than from <code>DriverManager</code> directly: the pool is created lazily on first use and closed by <code>AppContextListener</code> when the context shuts down, so a request no longer pays a TCP handshake and a MySQL authentication round trip for every statement. Reads that participate in a transaction accept a <code>Connection</code> parameter; standalone reads obtain a pooled connection. This dual API is a small amount of duplication, but it keeps transaction ownership in the service while allowing simple queries to remain one-liners.</p>
+<p>The catalogue search builds its SQL from a fixed base and appends only known clauses, so the filter builder is shared between the page query and its <code>COUNT(*)</code>:</p>
+<pre><code class="language-java">StringBuilder sql = new StringBuilder(&quot;SELECT * FROM resources&quot;)
+        .append(whereClause(criteria, params));   // clauses are constants
+...
+if (criteria.getLimit() &gt; 0) {
+    sql.append(&quot; LIMIT ? OFFSET ?&quot;);             // pagination, 12 rows per page
+}
+</code></pre>
+<p>Separating <code>whereClause</code> matters for pagination: the total shown on the page is produced by <code>count(criteria)</code> over exactly the same predicates as the page itself, so the two cannot drift apart. The clauses are constants; only the values are bound. This is the pattern that makes SQL injection structurally difficult: there is no code path in which a request parameter becomes SQL text. The same principle applies to updates and inserts, including the conditional status updates that return a boolean indicating whether a row changed.</p>
+<p>Polymorphic row mapping is handled in one place. The <code>ResourceDAO.map</code> method reads <code>resource_type</code> and constructs the corresponding subclass — <code>Book</code>, <code>LabEquipment</code>, <code>StudyMaterial</code>, or <code>DailyEssential</code> — then copies the common columns. Services and JSPs therefore see the concrete type through a <code>Resource</code> reference, and the catalogue&rsquo;s call to <code>displayDetails()</code> dispatches to the right implementation.</p>
+<h3 id="54-business-rules">5.4 Business rules</h3>
+<p>Table 5.3 lists the rules that matter most and where each is enforced. The table is also a map of the unit-test suite: every rule in the first column has at least one test in Section 6.2.</p>
+<p class="table-caption" id="tab5-3"><strong>Table 5.3.</strong> Principal business rules and enforcement points.</p>
+
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Only verified, active students may list or request</td>
+<td><code>ResourceService.requireVerifiedStudent</code>, <code>RequestService.createRequest</code></td>
+</tr>
+<tr>
+<td>A student cannot request their own resource</td>
+<td><code>RequestService.createRequest</code></td>
+</tr>
+<tr>
+<td>A resource can be requested only while <code>AVAILABLE</code></td>
+<td><code>RequestService.createRequest</code>, conditional update</td>
+</tr>
+<tr>
+<td>Duplicate active requests are rejected</td>
+<td><code>ResourceRequestDAO.hasActiveRequest</code> inside the transaction</td>
+</tr>
+<tr>
+<td>Only the owner may accept or reject</td>
+<td><code>RequestService.acceptRequest</code>, <code>rejectRequest</code></td>
+</tr>
+<tr>
+<td>Only the requester may cancel or review</td>
+<td><code>RequestService.cancelRequest</code>, <code>ReviewService</code></td>
+</tr>
+<tr>
+<td>A sale requires a positive price and a loan requires a positive fee; both are capped at 1,000,000; a donation is free</td>
+<td><code>ResourceService.validate</code></td>
+</tr>
+<tr>
+<td>Reserved or lent listings cannot be edited or deactivated</td>
+<td><code>ResourceService.update</code>, <code>deactivate</code></td>
+</tr>
+<tr>
+<td>A review requires a completed transaction and is unique</td>
+<td><code>ReviewService</code> plus unique <code>transaction_id</code></td>
+</tr>
+<tr>
+<td>Ratings must be between 1 and 5</td>
+<td><code>ReviewService</code> plus check constraint</td>
+</tr>
+</tbody>
+</table>
+<p>Validation is centralised in <code>ValidationUtil</code>, which trims, checks length, parses integers and decimals, normalises email, validates course codes, and rejects weak passwords. Errors are raised as <code>ValidationException</code> and translated by servlets into flash messages or, for missing resources, HTTP 404. Internal <code>SQLException</code>s are wrapped by <code>DbErrors</code> and logged with a generic user-facing message, so stack traces and SQL fragments never reach the browser.</p>
+<h3 id="55-web-layer">5.5 Web layer</h3>
+<p>Ten servlets implement the routes in Appendix B. Each extends <code>BaseServlet</code>, which provides view rendering, redirects, flash messages, current-user lookup, and typed parameter parsing. The servlet methods are intentionally thin: they parse input, call one service method, set attributes, and choose a view or redirect. No servlet contains a SQL statement, and no JSP contains a scriptlet.</p>
+<p>Authentication uses <code>HttpSession</code>. On successful login, <code>AuthServlet</code> calls <code>request.changeSessionId()</code> before storing the user ID and role, which mitigates session fixation. On logout, the session is invalidated. The session timeout is 30 minutes, and the cookie is <code>HttpOnly</code> and <code>SameSite=Lax</code> (configured in <code>META-INF/context.xml</code>), so it is not attached to cross-site requests. The filter reloads the user on every request, so a suspended account is rejected even if its session is still alive, and static assets bypass that lookup entirely.</p>
+<p>Password guessing is slowed in <code>AuthService</code>: five failed attempts for the same email within fifteen minutes lock that email until the window expires, while successful logins clear the counter. The counter is per application instance and held in memory, which is sufficient for a single-campus deployment; a multi-node deployment would need a shared store. The user-facing message deliberately does not distinguish an unknown email from a wrong password.</p>
+<p>CSRF protection uses a 32-byte random token, URL-safe Base64 encoded, stored in the session and rotated on login. <code>SecurityFilter</code> validates the token on every non-multipart POST <em>before</em> authentication and role checks. Multipart listing forms are validated inside <code>ResourceServlet</code> after the parts have been parsed, because reading a parameter from a multipart request would consume the stream. Tokens are compared with <code>MessageDigest.isEqual</code>, which avoids timing leaks.</p>
+<p>JSPs use JSTL and EL only. Dynamic text is emitted with <code>c:out</code> or <code>fn:escapeXml</code>; there are no scriptlets and no string concatenation of user data into HTML. The pages are organised into fragments for the header, footer, and flash messages, and error pages for 403, 404, and 500 are mapped in <code>web.xml</code>.</p>
+<h3 id="56-image-upload-and-retrieval">5.6 Image upload and retrieval</h3>
+<p>Image handling is a trust boundary, so it is implemented defensively. The upload path checks, in order: presence and non-zero size; a 5 MB limit; an allowed MIME type (<code>image/jpeg</code>, <code>image/png</code>, <code>image/gif</code>); a safe submitted extension, if one is present; successful decoding by <code>ImageIO</code>, which rejects a file whose bytes are not actually an image; and a pixel-count ceiling of 40 megapixels, because a small compressed file can decode into an enormous raster. Only then is a UUID filename generated, using the extension derived from the verified content type. The browser&rsquo;s filename is never used for storage.</p>
+<p class="table-caption" id="tab5-4"><strong>Table 5.4.</strong> Upload and retrieval controls.</p>
+
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Oversized upload</td>
+<td>5 MB per-file limit and a 6 MB request limit on <code>@MultipartConfig</code></td>
+</tr>
+<tr>
+<td>Decompression bomb</td>
+<td>40 megapixel ceiling on the decoded image</td>
+</tr>
+<tr>
+<td>Executable or HTML upload</td>
+<td>MIME allowlist plus <code>ImageIO</code> decode check</td>
+</tr>
+<tr>
+<td>Path traversal</td>
+<td>UUID names; <code>normalize()</code> plus <code>startsWith(uploadDir)</code> check</td>
+</tr>
+<tr>
+<td>Direct access to other files</td>
+<td><code>ImageServlet</code> accepts only the UUID pattern and an existing regular file inside the upload directory</td>
+</tr>
+<tr>
+<td>Stored XSS via image metadata</td>
+<td>Images are served as <code>image/*</code>, never as HTML; pages escape text</td>
+</tr>
+<tr>
+<td>Orphaned files</td>
+<td>Old image deletion is best-effort and never fails the user&rsquo;s request</td>
+</tr>
+</tbody>
+</table>
+<p>Retrieval is deliberately narrow. <code>ImageServlet</code> does not accept an arbitrary query parameter or path; it takes the path segment after <code>/images/</code>, validates it against a regular expression, resolves it inside the configured directory, and streams it with the correct content type and a one-day cache header. Missing files return 404 rather than an error page, which keeps broken listings readable.</p>
+<h3 id="57-catalogue-backup-and-restore">5.7 Catalogue backup and restore</h3>
+<p>The backup feature satisfies the file-handling and serialisation requirements without making serialisation the primary store. <code>BackupService.createBackup</code> loads every listing, converts each to a <code>ResourceBackupItem</code>, writes the catalogue to a timestamped file with <code>ObjectOutputStream</code>, and returns the filename to the admin page. <code>listBackups</code> exposes only files matching <code>catalog-YYYYMMDD-HHMMSS-SSS.ser</code> in the configured directory, newest first.</p>
+<p>Restore is more delicate, and follows five steps:</p>
+<ol>
+<li>Reject any filename that does not match the timestamp pattern or is not in the directory listing, then resolve and normalise the path and re-check that it remains inside the backup directory.</li>
+<li>Read the object with an <code>ObjectInputStream</code> whose <code>ObjectInputFilter</code> allows only the backup DTOs, <code>String</code>, <code>BigDecimal</code>, <code>BigInteger</code>, <code>Integer</code>, <code>Long</code>, <code>Number</code>, <code>ArrayList</code>, and primitive arrays, with limits on depth, references, and array length.</li>
+<li>Validate every item structurally — owner exists, enums parse, required fields are present, the price is not negative — before opening the restore transaction. Current business rules are deliberately <em>not</em> applied to stored rows.</li>
+<li>Insert only items whose owner and title do not already exist.</li>
+<li>Commit the batch, or roll back the whole restore on any failure.</li>
+</ol>
+<p class="listing-caption" id="lst2"><strong>Listing 2.</strong> Deserialisation allowlist and resource limits (<span class="mono">BackupService.java</span>, abridged).</p>
+
+<pre><code class="language-java">private static final ObjectInputFilter FILTER = info -&gt; {
+    if (info.depth() &gt; 20 || info.references() &gt; 100_000
+            || info.arrayLength() &gt; MAX_ITEMS)
+        return ObjectInputFilter.Status.REJECTED;
+    Class&lt;?&gt; serialClass = info.serialClass();
+    if (serialClass == null) return ObjectInputFilter.Status.UNDECIDED;
+    if (serialClass.isPrimitive()) return ObjectInputFilter.Status.ALLOWED;
+    if (serialClass.isArray()) {
+        Class&lt;?&gt; component = serialClass.getComponentType();
+        while (component.isArray()) component = component.getComponentType();
+        return component.isPrimitive() || component == Object.class
+                || allowed(component)
+                ? ObjectInputFilter.Status.ALLOWED
+                : ObjectInputFilter.Status.REJECTED;
+    }
+    return allowed(serialClass)
+            ? ObjectInputFilter.Status.ALLOWED
+            : ObjectInputFilter.Status.REJECTED;
+};
+</code></pre>
+<p>A defect found during verification illustrates why the filter needs a regression test. The first version allowed the DTO classes and <code>String</code> but rejected primitive arrays. <code>BigDecimal</code> serialises its unscaled value as a <code>byte[]</code>, so any backup containing a price failed to deserialise; restore therefore appeared to work for free listings and failed for every priced one. The filter now permits primitive array components, and <code>BackupServiceTest.serializationRoundTripKeepsEveryField</code> exercises a priced listing through a full write/read cycle. The episode is a useful reminder that deserialisation filters operate on the <em>serialisation graph</em>, not on the fields a developer sees in the class.</p>
+<p>A second, subtler defect came from applying today&rsquo;s rules to yesterday&rsquo;s data. Step 3 originally reused the ordinary listing validator, which — after lending fees became mandatory — rejected any stored <code>LEND</code> row whose fee was empty. A backup written before that rule existed then failed to restore with <code>Backup item 5: Lending fee must be greater than zero.</code>, even though every row was structurally valid and had been produced by the application itself. Validation is now split: structural checks guard the database, while business rules apply only to new input. The regression test <code>lendWithoutFeeStillRestoresAfterTheFeeRuleChanged</code> writes a legacy loan row and asserts that it still restores.</p>
+<h3 id="58-user-interface">5.8 User interface</h3>
+<p>The interface implements the pages required by the brief: home, register, login, student dashboard, catalogue, listing detail, add/edit listing, my listings, outgoing and incoming requests, transaction list and detail, review form, profile, admin dashboard, user management, listing moderation, activity, and backup. The home page presents a search bar, recent listings, and a three-step explanation of the exchange. The catalogue exposes all filters in one form, a sort selector (newest, price ascending, price descending, best condition), and an explicit empty state when nothing matches; results are paginated twelve at a time, and the page links rebuild the active filters so that paging never silently drops a search term. The listing form offers a category dropdown populated from existing categories plus a &ldquo;+ Create new category&rdquo; option that reveals a free-text field, which keeps categories consistent without preventing a student from introducing a new one.</p>
+<p>Accessibility was addressed at the markup level: form controls carry labels or accessible names, the navigation toggle exposes <code>aria-expanded</code>, images have alternative text, status is conveyed by text as well as colour, and the layout uses semantic headings. The stylesheet defines a small design system (colours, spacing, radii, shadows) and uses responsive grids rather than fixed widths. JavaScript is limited to the navigation toggle, the exchange-type dependent fields, and the category picker; no business rule depends on it, and every form still works if the script fails.</p>
+<h3 id="59-configuration-and-deployment">5.9 Configuration and deployment</h3>
+<p>Table 5.5 lists the configuration variables. The application reads them at startup through <code>AppConfig</code>, which falls back to a local JDBC URL and home-directory paths for development but requires <code>DB_PASSWORD</code>. Tomcat&rsquo;s <code>bin/setenv.sh</code> supplies the values in the test environment; the repository contains only an example file.</p>
+<p class="table-caption" id="tab5-5"><strong>Table 5.5.</strong> Configuration variables.</p>
+
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Required</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DB_URL</code></td>
+<td>No</td>
+<td><code>jdbc:mysql://localhost:3306/campus_exchange…</code></td>
+<td>JDBC connection string</td>
+</tr>
+<tr>
+<td><code>DB_USER</code></td>
+<td>No</td>
+<td><code>campus_app</code></td>
+<td>Database account</td>
+</tr>
+<tr>
+<td><code>DB_PASSWORD</code></td>
+<td><strong>Yes</strong></td>
+<td>—</td>
+<td>Database password; startup fails if absent</td>
+</tr>
+<tr>
+<td><code>UPLOAD_DIR</code></td>
+<td>No</td>
+<td><code>~/campus-exchange/uploads</code></td>
+<td>Listing images outside the WAR</td>
+</tr>
+<tr>
+<td><code>BACKUP_DIR</code></td>
+<td>No</td>
+<td><code>~/campus-exchange/backups</code></td>
+<td>Serialised catalogue backups</td>
+</tr>
+<tr>
+<td><code>DB_POOL_SIZE</code></td>
+<td>No</td>
+<td><code>10</code></td>
+<td>Maximum pooled JDBC connections</td>
+</tr>
+</tbody>
+</table>
+<p>Deployment is a conventional Maven WAR build. <code>mvn clean package</code> produces <code>target/campus-resource-exchange.war</code> (about 8 MB, including the MySQL driver, HikariCP, JSTL, and BCrypt); the WAR is copied to Tomcat&rsquo;s <code>webapps/</code> directory and the server is started. A wrapper script, <code>run.sh</code>, performs the whole cycle — build only when sources are newer than the WAR, stop Tomcat, redeploy, start, and poll until the application answers — and offers <code>--skip-build</code>, <code>stop</code>, and <code>smoke</code> modes. Building <em>before</em> sourcing Tomcat&rsquo;s <code>setenv.sh</code> is deliberate: exporting <code>UPLOAD_DIR</code> and <code>BACKUP_DIR</code> into the test JVM changes where <code>BackupServiceTest</code> reads and writes, which made three tests fail when the variables leaked into Maven. Database creation is scripted in <code>database/setup.sql</code> and <code>scripts/setup-db.sh</code>; the schema and demo data are loaded separately so that a reset is an explicit operation, and numbered upgrade scripts live in <code>database/migrations/</code>.</p>
+<h2 id="6-testing-and-evaluation">6. Testing and evaluation</h2>
+<h3 id="61-strategy">6.1 Strategy</h3>
+<p>The evaluation used four complementary levels:</p>
+<ul>
+<li><strong>Unit tests</strong> for business rules, using JUnit 5 [13] and Mockito [14] to replace DAOs and a mocked static <code>DbConnection</code> for transactional paths. These run without MySQL.</li>
+<li><strong>End-to-end tests</strong> through the deployed HTTP interface, using <code>curl</code> with per-actor cookie jars and assertions on status codes and page markers.</li>
+<li><strong>Template compilation</strong> of all JSPs with Tomcat&rsquo;s Jasper compiler, which catches EL and tag-library errors that unit tests cannot see.</li>
+<li><strong>Manual acceptance walkthrough</strong> of every page, including the 404 route, profile update, persistence across restart, and a restore of a deliberately deleted listing.</li>
+</ul>
+<p>This mix is deliberate. Unit tests are fast and precise but mock the database, so they cannot prove that SQL or JSPs work. The smoke suite exercises the real database, container, sessions, CSRF, and templates, but it is coarse: it asserts markers, not visual layout. Neither replaces a browser-based UI test, which is identified as future work.</p>
+<h3 id="62-unit-test-inventory">6.2 Unit test inventory</h3>
+<p>Table 6.1 lists the seven test classes and their focus. The suite contains 53 tests. Transactional methods are tested through package-private overloads that accept a <code>Connection</code>, which allows the locking and conditional-update logic to be exercised with mocks while the public method remains responsible for opening and committing the connection.</p>
+<p class="table-caption" id="tab6-1"><strong>Table 6.1.</strong> Unit test inventory.</p>
+
+<table>
+<thead>
+<tr>
+<th>Test class</th>
+<th>Tests</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ResourceTest</code></td>
+<td>8</td>
+<td>Status helpers, <code>displayDetails()</code>, search matching, price label, donation price</td>
+</tr>
+<tr>
+<td><code>AuthServiceTest</code></td>
+<td>6</td>
+<td>Registration validation, duplicate email/student ID, BCrypt hash, login success/failure, inactive account</td>
+</tr>
+<tr>
+<td><code>ResourceServiceTest</code></td>
+<td>8</td>
+<td>Required fields, sale/loan/donation rules, mandatory lending fee and its ceiling, legacy fee label, unverified owner, ownership, reserved listing</td>
+</tr>
+<tr>
+<td><code>RequestServiceTest</code></td>
+<td>10</td>
+<td>Self-request, duplicate request, unavailable resource, ownership, acceptance, rollback, second acceptance</td>
+</tr>
+<tr>
+<td><code>TransactionServiceTest</code></td>
+<td>7</td>
+<td>Sale handover, loan start/return, invalid transitions, non-participant, inactive listing after loan</td>
+</tr>
+<tr>
+<td><code>ReviewServiceTest</code></td>
+<td>6</td>
+<td>Rating bounds, pre-completion rejection, duplicate review, non-requester, valid review</td>
+</tr>
+<tr>
+<td><code>BackupServiceTest</code></td>
+<td>8</td>
+<td>Serialisation round trip, no credentials, corrupt file, disallowed class, invalid items, legacy lend without fee, duplicate restore, listing filter</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-end-to-end-suite">6.3 End-to-end suite</h3>
+<p>The smoke script (<code>scripts/smoke.sh</code>) drives the real application with <code>curl</code>. It creates uniquely named students and listings on each run; <code>./run.sh smoke</code> removes that data again afterwards on a local database (<code>scripts/clean-smoke.sh</code>), so repeated runs do not accumulate junk in the catalogue. Each step asserts an HTTP status and one or more body markers; a mismatch exits non-zero. Table 6.2 groups the 23 steps into phases.</p>
+<p class="table-caption" id="tab6-2"><strong>Table 6.2.</strong> End-to-end phases and coverage.</p>
+
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Steps</th>
+<th>What is exercised</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reachability and admin login</td>
+<td>1–2</td>
+<td>Home page, database connectivity, session login</td>
+</tr>
+<tr>
+<td>Registration and verification</td>
+<td>3–5</td>
+<td>Student registration, pending state, admin verification, student login</td>
+</tr>
+<tr>
+<td>Listing with image</td>
+<td>6–7</td>
+<td>Multipart upload, image serving, second student registration and verification</td>
+</tr>
+<tr>
+<td>Discovery and request</td>
+<td>8–10</td>
+<td>Search, request creation, owner acceptance, transaction creation</td>
+</tr>
+<tr>
+<td>Sale completion</td>
+<td>11</td>
+<td>Handover, resource becomes unavailable, request completes</td>
+</tr>
+<tr>
+<td>Review</td>
+<td>12–13</td>
+<td>Review saved, duplicate review rejected</td>
+</tr>
+<tr>
+<td>Loan lifecycle</td>
+<td>14–18</td>
+<td>Loan listing, request, acceptance, loan start, return, resource available</td>
+</tr>
+<tr>
+<td>Authorisation</td>
+<td>19–21</td>
+<td>Student blocked from admin, missing CSRF token rejected, anonymous redirect</td>
+</tr>
+<tr>
+<td>Backup</td>
+<td>22–23</td>
+<td>Backup created, restore succeeds and skips duplicates</td>
+</tr>
+</tbody>
+</table>
+<h3 id="64-results">6.4 Results</h3>
+<p>Table 6.3 records the verification results. Unit tests and the end-to-end suite were re-executed for this revision on 25 October 2026 against the deployed WAR, after the schema migration and the sample photographs had been applied.</p>
+<p class="table-caption" id="tab6-3"><strong>Table 6.3.</strong> Verification results.</p>
+
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Command or method</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unit tests</td>
+<td><code>mvn clean test</code></td>
+<td><strong>53 tests, 0 failures, 0 errors, 0 skipped</strong> (7 classes)</td>
+</tr>
+<tr>
+<td>Build</td>
+<td><code>mvn clean package</code></td>
+<td>WAR produced, 7,977,181 bytes</td>
+</tr>
+<tr>
+<td>JSP compilation</td>
+<td>Jasper <code>JspC</code> over all templates</td>
+<td><strong>22 JSPs, 0 errors</strong></td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Tomcat 10.1.55 startup log</td>
+<td><code>campus-exchange - Start completed.</code> and <code>Database connection verified at startup.</code></td>
+</tr>
+<tr>
+<td>End-to-end</td>
+<td><code>BASE_URL=… bash scripts/smoke.sh</code></td>
+<td><strong>23/23 steps passed</strong>, including after a restart</td>
+</tr>
+<tr>
+<td>Migration</td>
+<td><code>001_add_daily_essential.sql</code> on an existing database</td>
+<td>Enum extended, existing rows untouched</td>
+</tr>
+<tr>
+<td>Pagination</td>
+<td>17 listings, 12 per page</td>
+<td>12 rows on page 1, 5 on page 2, filters preserved</td>
+</tr>
+<tr>
+<td>Throttling</td>
+<td>Six failed logins for one email</td>
+<td>Fifth fails normally, sixth reports a 15-minute lock</td>
+</tr>
+<tr>
+<td>Manual pages</td>
+<td>HTTP GET over every route</td>
+<td>All expected pages returned 200; unknown route returned 404</td>
+</tr>
+<tr>
+<td>Persistence</td>
+<td>Create listing, restart Tomcat, reload</td>
+<td>Listing still present</td>
+</tr>
+<tr>
+<td>Restore</td>
+<td>Delete listing with SQL, restore backup</td>
+<td><code>1 listing(s) added; duplicates were skipped.</code></td>
+</tr>
+</tbody>
+</table>
+<p>The environment was Ubuntu 26.04.1 LTS, JDK 21.0.12, Maven 3.9.12, Tomcat 10.1.55, and MySQL 8.4.11. The unit-test run emits a Mockito self-attach warning under JDK 21; it is harmless and does not affect the result. The build and the end-to-end suite both used the same database and configuration described in Section 5.9.</p>
+<h3 id="65-defect-analysis">6.5 Defect analysis</h3>
+<p>Three defects found during verification are worth recording because they show where testing effort paid off.</p>
+<p><strong>Deserialisation filter rejected primitive arrays.</strong> As described in Section 5.7, <code>BigDecimal</code> serialises through a <code>byte[]</code>. The original filter allowed the DTO classes but not primitive arrays, so restore failed for any catalogue containing a price. The failure was invisible to a free-listing test and only appeared when a real listing was restored. The fix extends the filter to primitive array components, and a round-trip test now covers a priced item. This is a good example of a defect that unit tests would miss if they only tested empty or free data.</p>
+<p><strong>Owner-side request messages were ambiguous.</strong> In the first implementation, an empty request message produced a blank cell in the owner&rsquo;s incoming table, which looked like a rendering fault. The fix shows the message in the owner&rsquo;s dashboard &ldquo;Received&rdquo; list and renders &ldquo;No message provided.&rdquo; for empty messages. The smoke test now asserts that the owner sees the message text, so the behaviour is covered rather than merely patched.</p>
+<p><strong>Restore rejected older backups after a rule change.</strong> When lending fees became mandatory, the restore path — which reused the ordinary listing validator — began rejecting every stored loan row without a fee. Backups written a week earlier were still structurally perfect, but the new rule was being applied to old data, so restore aborted with an item-level error. The fix separates structural validation (owner exists, enums parse, required fields, non-negative price) from business validation, which now applies only to new input. The smoke suite had already been failing at this step, which is how the problem was found; a dedicated regression test now restores a fee-less legacy loan.</p>
+<p>None of these defects affected the access-control or concurrency guarantees, but all three affected the credibility of a feature in demonstration. They are reported here rather than hidden because the project&rsquo;s evaluation claim depends on distinguishing &ldquo;tests pass&rdquo; from &ldquo;the feature works&rdquo;.</p>
+<h3 id="66-acceptance-criteria">6.6 Acceptance criteria</h3>
+<p>Table 6.4 evaluates the twenty acceptance criteria from the brief. All twenty are met. The evidence column points to the test or manual check that demonstrates the criterion, not merely to the code that is supposed to implement it.</p>
+<p class="table-caption" id="tab6-4"><strong>Table 6.4.</strong> Acceptance criteria and evidence.</p>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Criterion</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Application starts with documented instructions</td>
+<td>Sections 5.9 and Appendix A; startup log</td>
+</tr>
+<tr>
+<td>2</td>
+<td>New student can register</td>
+<td>Smoke step 3</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Student can log in and out</td>
+<td>Smoke steps 4–5; logout in header</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Administrator can verify a student</td>
+<td>Smoke step 4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Verified student can create a listing</td>
+<td>Smoke step 6</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Listing survives an application restart</td>
+<td>Manual restart check</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Student can upload an image</td>
+<td>Smoke step 6; image served as <code>image/png</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Another student can find the listing</td>
+<td>Smoke step 8</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Second student can request it</td>
+<td>Smoke step 9</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Owner can accept or reject</td>
+<td>Smoke step 10; rejection path unit-tested</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Acceptance creates a transaction consistently</td>
+<td>Smoke step 10; <code>RequestServiceTest</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Sold or donated resource becomes unavailable</td>
+<td>Smoke step 11</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Lent resource can be returned and made available</td>
+<td>Smoke steps 17–18</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Requester can review after completion</td>
+<td>Smoke step 12</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Duplicate reviews and invalid transitions rejected</td>
+<td>Smoke step 13; service tests</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Unauthorised users cannot perform protected operations</td>
+<td>Smoke steps 19–21; service checks</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Backup and restore work</td>
+<td>Smoke steps 22–23; <code>BackupServiceTest</code></td>
+</tr>
+<tr>
+<td>18</td>
+<td>OOP concepts in working code</td>
+<td>Table 4.1; code inspection</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Project builds with Maven</td>
+<td><code>mvn clean package</code></td>
+</tr>
+<tr>
+<td>20</td>
+<td>README documents setup, configuration, deployment, demo</td>
+<td><code>README.md</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="67-threats-to-validity">6.7 Threats to validity</h3>
+<p>The evaluation has clear limits, and they should be weighed when interpreting the claims.</p>
+<ul>
+<li><strong>Single environment.</strong> All results come from one Ubuntu host with one Tomcat instance and one MySQL instance. Portability to another container version or operating system is plausible but not demonstrated.</li>
+<li><strong>Mocked persistence in unit tests.</strong> The 53 unit tests isolate business rules from SQL. They prove the decision logic, not the queries. The end-to-end suite covers the queries but asserts page markers rather than database rows.</li>
+<li><strong>No browser automation.</strong> The smoke suite uses HTTP, not a browser. It cannot detect layout regressions, broken focus order, or JavaScript errors. The responsive and accessibility claims rest on markup inspection and manual checks.</li>
+<li><strong>No load or penetration testing.</strong> Concurrency is tested through mocked conditional updates and reasoned from row locking; it is not stress-tested with parallel clients. The security review is a design review plus targeted tests, not an adversarial audit.</li>
+<li><strong>No user study.</strong> Usability claims are based on the design and a manual walkthrough, not on measurements with students.</li>
+<li><strong>Recorded end-to-end run.</strong> The 23-step result comes from the run of 25 October 2026 against the deployed WAR; the pagination, throttling, and migration rows in Table 6.3 are targeted manual checks performed the same day, not part of the automated suite.</li>
+</ul>
+<p>These limitations do not undermine the central claim — that the required workflows are implemented and the stated rules hold — but they do bound it. Section 8 proposes the tests that would strengthen it.</p>
+<h2 id="7-discussion">7. Discussion</h2>
+<h3 id="71-design-trade-offs">7.1 Design trade-offs</h3>
+<p>Table 7.1 summarises the main decisions, their benefits, and their costs. The table is intentionally balanced: each choice buys something and pays for it somewhere.</p>
+<p class="table-caption" id="tab7-1"><strong>Table 7.1.</strong> Principal design trade-offs.</p>
+
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Benefit</th>
+<th>Cost / alternative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Plain JDBC and DAOs instead of an ORM</td>
+<td>Full control of SQL, locks, and transaction boundaries; no hidden queries; matches the brief</td>
+<td>More mapping boilerplate; schema changes touch DAO code</td>
+</tr>
+<tr>
+<td>Session authentication instead of tokens</td>
+<td>Simple, well understood, server-side revocation; no token storage in the browser</td>
+<td>Stateful; scaling requires sticky sessions or a shared session store</td>
+</tr>
+<tr>
+<td>Pessimistic row locks for acceptance</td>
+<td>Correct under concurrent owners; easy to reason about</td>
+<td>Holds locks during the transaction; throughput limited for hot listings</td>
+</tr>
+<tr>
+<td>Conditional updates as a second guard</td>
+<td>Protects against lost updates and future refactoring</td>
+<td>Every transition must remember to use the conditional variant</td>
+</tr>
+<tr>
+<td>Serialisation for backups</td>
+<td>Directly satisfies the file-handling requirement; simple DTO format</td>
+<td>Java-specific; fragile across class changes; requires a strict filter</td>
+</tr>
+<tr>
+<td>Server-rendered JSP instead of a SPA</td>
+<td>Small surface, fast first render, no API layer, works without JavaScript</td>
+<td>Less interactive; full-page reloads; harder to test without a browser</td>
+</tr>
+<tr>
+<td>One administrator role</td>
+<td>Simple authorisation model; sufficient for a campus deployment</td>
+<td>No separation between verification, moderation, and operations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-security-posture">7.2 Security posture</h3>
+<p>The strongest parts of the design are access control, injection resistance, and deserialisation. Authorisation is checked in the filter and again in services; ownership is derived from the database rather than from form fields; SQL is parameterised everywhere; output is escaped; uploads are content-checked and renamed; and backups are filtered and validated. These are meaningful defences, and the targeted tests cover the obvious bypasses (missing CSRF token, student in the admin area, second acceptance, duplicate review).</p>
+<p>The residual risks are equally real. Login attempts are throttled in memory (five failures per email per fifteen minutes), which blunts password guessing against a single instance but is neither durable across restarts nor shared between nodes, and nothing limits request creation or uploads. There is no multi-factor authentication. The session cookie is <code>HttpOnly</code> and <code>SameSite=Lax</code>, but not marked <code>Secure</code>, because the development deployment runs over plain HTTP; a production deployment behind TLS should also set <code>Secure</code> and a content-security policy, which the application does not yet emit. Backup files are unencrypted and readable by the Tomcat account. There is no immutable audit log, so an administrator action is recorded only by the current state of the row it changed. And the application trusts the administrator&rsquo;s verification decision; it does not integrate with a university identity provider. These are appropriate omissions for a coursework version but should be addressed before any real deployment.</p>
+<h3 id="73-maintainability-and-extensibility">7.3 Maintainability and extensibility</h3>
+<p>The layered structure makes most changes local. Adding a new search filter touches <code>ResourceSearchCriteria</code>, <code>ResourceDAO</code>, and the catalogue form, but no service or JSP logic beyond the form. Adding a new resource type touches the <code>ResourceType</code> enum, <code>ResourceService.newResource</code>, validation, the backup parser, and the JSP labels; the compiler finds the <code>switch</code> expressions that need a new branch, which is a useful safety property. Adding a payment or notification feature would introduce a new service and an adapter, not a rewrite, because servlets already depend on service interfaces rather than on SQL.</p>
+<p>The weakest extensibility point is the enum-based type system: MySQL <code>ENUM</code> columns and Java <code>switch</code> expressions must be changed together. A lookup table would be more flexible but would add joins and complexity for a domain with four stable types. For the current scope, the enum is the simpler and more honest choice, and the migration under <code>database/migrations/</code> shows that even this change is a two-line deployment step rather than a redesign.</p>
+<h3 id="74-limitations">7.4 Limitations</h3>
+<p>The version-1 limitations are:</p>
+<ul>
+<li><strong>No payments, chat, notifications, delivery, or recommendations.</strong> These were excluded by the brief and would each add a subsystem.</li>
+<li><strong>No overdue state or reminders.</strong> A loan can remain <code>ACTIVE_LOAN</code> indefinitely; there is no scheduled job to flag it.</li>
+<li><strong>No cancellation after acceptance.</strong> Once a request is accepted, the transaction must be completed; there is no mutual-cancellation flow.</li>
+<li><strong>No listing reactivation.</strong> A deactivated listing can be edited only through direct database action; the UI has no &ldquo;restore&rdquo; action for students.</li>
+<li><strong>Catalogue pagination only.</strong> The catalogue is paginated at twelve listings per page, but admin lists still load every matching row; a large institution would want the same treatment there.</li>
+<li><strong>One image per listing.</strong> No gallery, thumbnail generation, or cropping.</li>
+<li><strong>No email verification or password reset.</strong> An administrator must intervene.</li>
+<li><strong>Backups are not downloadable or encrypted.</strong> They are server-side files only.</li>
+<li><strong>No browser automation.</strong> The smoke suite covers HTTP behaviour, not rendering.</li>
+<li><strong>Throttling is per instance and in memory.</strong> A restart clears the counters, and two Tomcat nodes would each keep their own.</li>
+<li><strong>No accessibility audit with assistive technology.</strong> The markup follows good practice but has not been tested with a screen reader.</li>
+</ul>
+<h2 id="8-conclusion-and-future-work">8. Conclusion and future work</h2>
+<h3 id="81-summary">8.1 Summary</h3>
+<p>This report described the design and implementation of Campus Resource Exchange, a framework-free Jakarta EE application for peer-to-peer academic resource sharing. The system implements registration and administrator verification, listing and search, requests and owner decisions, sale and loan lifecycles, reviews, administration, image upload, and serialised catalogue backup. It is organised into presentation, web, business, and data-access layers; it uses plain JDBC with parameterised SQL; and it enforces authorisation, CSRF protection, upload validation, and output escaping at the server.</p>
+<p>The evaluation supports three conclusions. First, the required workflows are implemented end to end: 53 unit tests pass, the WAR builds and deploys, all 22 JSPs compile, and the 23-step smoke suite passes. Second, the concurrency design is sound at the level it was tested: row locks plus conditional updates plus a single transaction prevent double reservation and duplicate transactions, and the failure paths roll back cleanly. Third, the security-sensitive parts of the brief — password storage, CSRF, file upload, and deserialisation — can be implemented defensibly without a framework, provided the design treats the browser and the backup file as untrusted. The final revision also addresses the operational gaps that the first evaluation identified: connections are pooled, the catalogue is paginated and sortable, login is throttled, the session cookie is same-site, and a CI workflow runs both the unit and end-to-end suites.</p>
+<p>The project also shows the cost of that discipline. Transactional correctness required package-private test seams and careful lock ordering. Deserialisation safety required a filter that understands the serialisation graph, and the first version still had a defect that only a priced-item round trip exposed. Server-rendered JSP kept the client simple but made UI verification manual. These are ordinary engineering trade-offs, not failures; naming them is part of reporting the result honestly.</p>
+<h3 id="82-future-work">8.2 Future work</h3>
+<p>The next steps, in priority order, are:</p>
+<ol>
+<li><strong>Remaining operational hardening.</strong> Mark the session cookie <code>Secure</code> behind TLS, add a content-security policy, encrypt or access-control backup files, and move login throttling to a shared store so it survives restarts and multiple nodes.</li>
+<li><strong>Scale and usability.</strong> Paginate and sort the admin lists, add listing reactivation, and add a mutual-cancellation flow for accepted transactions.</li>
+<li><strong>Lifecycle completeness.</strong> Implement the <code>OVERDUE</code> state with a scheduled check, reminder notifications, and an owner-facing loan dashboard.</li>
+<li><strong>Identity.</strong> Add email verification and password reset, and consider integration with a university identity provider if one exposes a suitable API.</li>
+<li><strong>Testing.</strong> Add browser-level tests (Playwright or Selenium) for the main flows, a parallel-request stress test against real MySQL, and an accessibility audit with a screen reader.</li>
+<li><strong>Audit and observability.</strong> Record administrative actions in an append-only audit table and add structured logging with request identifiers.</li>
+</ol>
+<p>None of these requires abandoning the architecture. That is the practical test of the layering: the next feature should be a new service and a new route, not a rewrite of the existing ones.</p>
+<h2 id="references">References</h2>
+<div class="references">
+
+<p>[1] R. Botsman and R. Rogers, <em>What's Mine Is Yours: The Rise of Collaborative Consumption</em>. New York, NY, USA: HarperBusiness, 2010.</p>
+
+<p>[2] J. Hamari, M. Sjöklint, and A. Ukkonen, “The sharing economy: Why people participate in collaborative consumption,” <em>Journal of the Association for Information Science and Technology</em>, vol. 67, no. 9, pp. 2047–2059, 2016, doi: 10.1002/asi.23552.</p>
+
+<p>[3] E. Gamma, R. Helm, R. Johnson, and J. Vlissides, <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>. Reading, MA, USA: Addison-Wesley, 1994.</p>
+
+<p>[4] M. Fowler, <em>Patterns of Enterprise Application Architecture</em>. Boston, MA, USA: Addison-Wesley, 2002.</p>
+
+<p>[5] N. Provos and D. Mazières, “A future-adaptable password scheme,” in <em>Proceedings of the USENIX Annual Technical Conference</em>, Monterey, CA, USA, 1999, pp. 81–91.</p>
+
+<p>[6] OWASP Foundation, “Cross-Site Request Forgery Prevention Cheat Sheet,” <em>OWASP Cheat Sheet Series</em>. [Online]. Available: https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html</p>
+
+<p>[7] OWASP Foundation, “File Upload Cheat Sheet,” <em>OWASP Cheat Sheet Series</em>. [Online]. Available: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html</p>
+
+<p>[8] OWASP Foundation, “Deserialization Cheat Sheet,” <em>OWASP Cheat Sheet Series</em>. [Online]. Available: https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html</p>
+
+<p>[9] Jakarta EE Working Group, “Jakarta Servlet Specification, Version 6.0,” 2022. [Online]. Available: https://jakarta.ee/specifications/servlet/6.0/</p>
+
+<p>[10] Apache Software Foundation, “Apache Tomcat 10.1 Documentation.” [Online]. Available: https://tomcat.apache.org/tomcat-10.1-doc/</p>
+
+<p>[11] Oracle Corporation, “MySQL 8.0 Reference Manual.” [Online]. Available: https://dev.mysql.com/doc/refman/8.0/en/</p>
+
+<p>[12] Oracle Corporation, “Java Database Connectivity (JDBC) API Specification,” Java SE 17. [Online]. Available: https://docs.oracle.com/en/java/javase/17/docs/api/java.sql/java/sql/package-summary.html</p>
+
+<p>[13] JUnit Team, “JUnit 5 User Guide.” [Online]. Available: https://junit.org/junit5/docs/current/user-guide/</p>
+
+<p>[14] Mockito, “Mockito Framework Documentation.” [Online]. Available: https://javadoc.io/doc/org.mockito/mockito-core/latest/</p>
+
+<p>[15] OWASP Foundation, “OWASP Top 10 – 2021: The Ten Most Critical Web Application Security Risks,” 2021. [Online]. Available: https://owasp.org/Top10/</p>
+
+<p>[16] Jakarta EE Working Group, “Jakarta Server Pages Specification, Version 3.1,” 2022. [Online]. Available: https://jakarta.ee/specifications/pages/3.1/</p>
+
+</div>
+
+<h2 id="appendix-a-build-and-deployment">Appendix A — Build and deployment</h2>
+<p>The following sequence reproduces the verified environment. It assumes JDK 21, Maven 3.9+, Tomcat 10.1, and MySQL 8 are installed, and that the database password is supplied through the environment rather than committed.</p>
+<pre><code class="language-bash">export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export PATH=&quot;$JAVA_HOME/bin:$HOME/tools/apache-maven-3.9.12/bin:$PATH&quot;
+export CATALINA_HOME=&quot;$HOME/tools/apache-tomcat-10.1.55&quot;
+
+./run.sh                       # build if stale, deploy, start, wait for HTTP 200
+mvn clean test                 # 53 unit tests, no database required
+mvn clean package              # target/campus-resource-exchange.war (about 8 MB)
+
+cp target/campus-resource-exchange.war &quot;$CATALINA_HOME/webapps/&quot;
+&quot;$CATALINA_HOME/bin/startup.sh&quot;
+</code></pre>
+<p>Upgrading an existing database (rather than resetting it) applies the numbered scripts:</p>
+<pre><code class="language-bash">mysql -u campus_app -p campus_exchange &lt; database/migrations/001_add_daily_essential.sql
+</code></pre>
+<p>Database setup, demo data, and Tomcat environment variables are documented in <code>README.md</code> and <code>config/application.properties.example</code>. The end-to-end suite is run with:</p>
+<pre><code class="language-bash">BASE_URL=http://localhost:8080/campus-resource-exchange bash scripts/smoke.sh
+./run.sh smoke                 # same, then remove the data it created (local DB only)
+</code></pre>
+<h2 id="appendix-b-route-map">Appendix B — Route map</h2>
+<p>Table B.1 lists the HTTP routes. All state-changing routes are POST and require a CSRF token; all routes except the public catalogue, authentication, images, and assets require a session.</p>
+<p class="table-caption" id="tabB-1"><strong>Table B.1.</strong> HTTP routes.</p>
+
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Method</th>
+<th>Actor</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/home</code>, <code>/</code></td>
+<td>GET</td>
+<td>Any</td>
+<td>Landing page</td>
+</tr>
+<tr>
+<td><code>/login</code>, <code>/register</code></td>
+<td>GET, POST</td>
+<td>Any</td>
+<td>Authentication and registration</td>
+</tr>
+<tr>
+<td><code>/logout</code></td>
+<td>GET, POST</td>
+<td>Authenticated</td>
+<td>Invalidate session</td>
+</tr>
+<tr>
+<td><code>/dashboard</code></td>
+<td>GET</td>
+<td>Student</td>
+<td>Student summary</td>
+</tr>
+<tr>
+<td><code>/profile</code></td>
+<td>GET, POST</td>
+<td>Authenticated</td>
+<td>View or update profile</td>
+</tr>
+<tr>
+<td><code>/resources</code></td>
+<td>GET</td>
+<td>Any</td>
+<td>Catalogue and search</td>
+</tr>
+<tr>
+<td><code>/resources/view?id=</code></td>
+<td>GET</td>
+<td>Any</td>
+<td>Listing detail and reviews</td>
+</tr>
+<tr>
+<td><code>/resources/new</code></td>
+<td>GET, POST</td>
+<td>Verified student</td>
+<td>Create listing</td>
+</tr>
+<tr>
+<td><code>/resources/edit?id=</code></td>
+<td>GET, POST</td>
+<td>Owner</td>
+<td>Edit listing</td>
+</tr>
+<tr>
+<td><code>/resources/delete</code></td>
+<td>POST</td>
+<td>Owner</td>
+<td>Deactivate listing</td>
+</tr>
+<tr>
+<td><code>/resources/mine</code></td>
+<td>GET</td>
+<td>Student</td>
+<td>Own listings</td>
+</tr>
+<tr>
+<td><code>/requests/outgoing</code>, <code>/requests/incoming</code></td>
+<td>GET</td>
+<td>Student</td>
+<td>Request lists</td>
+</tr>
+<tr>
+<td><code>/requests/new</code></td>
+<td>POST</td>
+<td>Verified student</td>
+<td>Create request</td>
+</tr>
+<tr>
+<td><code>/requests/accept</code>, <code>/requests/reject</code></td>
+<td>POST</td>
+<td>Owner</td>
+<td>Decide request</td>
+</tr>
+<tr>
+<td><code>/requests/cancel</code></td>
+<td>POST</td>
+<td>Requester</td>
+<td>Cancel pending request</td>
+</tr>
+<tr>
+<td><code>/transactions</code></td>
+<td>GET</td>
+<td>Student</td>
+<td>Exchange list</td>
+</tr>
+<tr>
+<td><code>/transactions/view?id=</code></td>
+<td>GET</td>
+<td>Participant</td>
+<td>Exchange detail</td>
+</tr>
+<tr>
+<td><code>/transactions/handover</code>, <code>/transactions/lend</code>, <code>/transactions/return</code></td>
+<td>POST</td>
+<td>Owner</td>
+<td>Advance exchange</td>
+</tr>
+<tr>
+<td><code>/reviews/new</code></td>
+<td>GET, POST</td>
+<td>Requester</td>
+<td>Review completed exchange</td>
+</tr>
+<tr>
+<td><code>/admin</code>, <code>/admin/users</code>, <code>/admin/listings</code>, <code>/admin/activity</code>, <code>/admin/backup</code></td>
+<td>GET</td>
+<td>Administrator</td>
+<td>Administration views</td>
+</tr>
+<tr>
+<td><code>/admin/users/verify</code>, <code>/admin/users/reject</code>, <code>/admin/users/status</code></td>
+<td>POST</td>
+<td>Administrator</td>
+<td>Account moderation</td>
+</tr>
+<tr>
+<td><code>/admin/listings/status</code></td>
+<td>POST</td>
+<td>Administrator</td>
+<td>Listing moderation</td>
+</tr>
+<tr>
+<td><code>/admin/backup/create</code>, <code>/admin/backup/restore</code></td>
+<td>POST</td>
+<td>Administrator</td>
+<td>Catalogue backup and restore</td>
+</tr>
+<tr>
+<td><code>/images/*</code></td>
+<td>GET</td>
+<td>Any</td>
+<td>Controlled image retrieval</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix-c-development-accounts">Appendix C — Development accounts</h2>
+<p>The sample data creates four accounts and twenty-five listings across books, laboratory equipment, study material, and daily essentials, each with a photo. The passwords are development-only and must never be reused.</p>
+<p class="table-caption" id="tabC-1"><strong>Table C.1.</strong> Demo accounts.</p>
+
+<table>
+<thead>
+<tr>
+<th>Account</th>
+<th>Password</th>
+<th>Role</th>
+<th>State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin@campus.test</code></td>
+<td><code>Admin@12345</code></td>
+<td>Administrator</td>
+<td>Active</td>
+</tr>
+<tr>
+<td><code>alice@campus.test</code></td>
+<td><code>Student@123</code></td>
+<td>Student</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td><code>bob@campus.test</code></td>
+<td><code>Student@123</code></td>
+<td>Student</td>
+<td>Verified</td>
+</tr>
+<tr>
+<td><code>carol@campus.test</code></td>
+<td><code>Student@123</code></td>
+<td>Student</td>
+<td>Pending</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix-d-team-contributions">Appendix D — Team contributions</h2>
+<p>Table D.1 records the division of work described in the project brief. The boundaries are modular but the interfaces between them — service signatures, DAO signatures, and status transitions — were agreed jointly and exercised by the shared test suite.</p>
+<p class="table-caption" id="tabD-1"><strong>Table D.1.</strong> Team contributions.</p>
+
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Area</th>
+<th>Principal artefacts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shllok</td>
+<td>Core application</td>
+<td>Domain model, enums, interfaces, exception hierarchy, business rules, unit tests</td>
+</tr>
+<tr>
+<td>Pavan</td>
+<td>Data management</td>
+<td>Schema, sample data, JDBC connection and DAOs, file upload, serialisation backup</td>
+</tr>
+<tr>
+<td>Shelly</td>
+<td>UI and web application</td>
+<td>Servlets, filter, sessions, CSRF, JSPs, CSS, JavaScript, navigation and error pages</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

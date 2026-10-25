@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="750" viewBox="0 0 1000 750"><rect width="1000" height="780" fill="#ffffff"/><rect x="20" y="30" width="960" height="280" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.2"/>
+<text x="36" y="56" font-family="Liberation Sans" font-size="19" font-weight="bold" fill="#123a6b" text-anchor="start">Resource</text>
+<text x="36" y="76" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#52677d" text-anchor="start">resources.status</text>
+<rect x="50" y="100" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="135.0" y="133.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">AVAILABLE</text>
+<rect x="320" y="100" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="405.0" y="133.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">RESERVED</text>
+<rect x="650" y="55" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="735.0" y="88.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">UNAVAILABLE</text>
+<rect x="650" y="165" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="735.0" y="198.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">LENT</text>
+<rect x="50" y="210" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="135.0" y="243.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">INACTIVE</text>
+<line x1="220" y1="127" x2="312.35" y2="127.0" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="320,127 312.20577136594005,131.5 312.20577136594005,122.5" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="242.48" y="108.0" width="55.040000000000006" height="19" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="270.0" y="121.0" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#334e68" text-anchor="middle">accept</text>
+<line x1="490" y1="114" x2="642.4985578309645" y2="83.50028843380711" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="650,82 643.2396526276458,87.94118703670435 641.4746074114022,79.11596095548606" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="534.64" y="79.0" width="70.72" height="19" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="570.0" y="92.0" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#334e68" text-anchor="middle">handover</text>
+<line x1="490" y1="146" x2="642.6478198249364" y2="189.8862481996692" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="650,192 641.2658227000344,194.17120862488264 643.7525895239529,185.5215848895137" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="526.8" y="150.0" width="86.4" height="19" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="570.0" y="163.0" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#334e68" text-anchor="middle">loan start</text>
+<polyline points="650,192 560,192 560,285 240,285 240,127 220,127" fill="none" stroke="#52677d" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="220,127 226.9282032302755,123.0 226.9282032302755,131.0" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="372.48" y="265" width="55.040000000000006" height="19" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="400" y="278" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#52677d" text-anchor="middle">return</text>
+<line x1="135" y1="154" x2="135.0" y2="202.35" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="135,210 130.5,202.20577136594005 139.5,202.20577136594005" fill="#52677d" stroke="none" stroke-width="1"/>
+<text x="148" y="180" font-family="Liberation Sans" font-size="12.5" font-weight="normal" fill="#52677d" text-anchor="start">deactivate</text>
+<rect x="20" y="330" width="960" height="210" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.2"/>
+<text x="36" y="356" font-family="Liberation Sans" font-size="19" font-weight="bold" fill="#123a6b" text-anchor="start">Request</text>
+<text x="36" y="376" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#52677d" text-anchor="start">resource_requests.status</text>
+<rect x="50" y="390" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="135.0" y="423.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">PENDING</text>
+<rect x="300" y="390" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="385.0" y="423.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">ACCEPTED</text>
+<rect x="650" y="390" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="735.0" y="423.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">COMPLETED</text>
+<rect x="300" y="470" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="385.0" y="503.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">REJECTED</text>
+<rect x="50" y="470" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="135.0" y="503.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">CANCELLED</text>
+<line x1="220" y1="417" x2="292.35" y2="417.0" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="300,417 292.20577136594005,421.5 292.20577136594005,412.5" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="208.68" y="399.0" width="102.64000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="260.0" y="411.0" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">owner accepts</text>
+<line x1="470" y1="417" x2="642.35" y2="417.0" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="650,417 642.2057713659401,421.5 642.2057713659401,412.5" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="508.68" y="399.0" width="102.64000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="560.0" y="411.0" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">exchange ends</text>
+<line x1="135" y1="444" x2="135.0" y2="462.35" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="135,470 130.5,462.20577136594005 139.5,462.20577136594005" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="109.16" y="437.7" width="51.68000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="135.0" y="449.7" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">cancel</text>
+<line x1="220" y1="430" x2="322.81058031031347" y2="467.3856655673867" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="330,470 321.137191404655,471.5654468378962 324.21287897243536,463.1073060265003" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="249.16" y="432.0" width="51.68000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="275.0" y="444.0" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">reject</text>
+<rect x="20" y="560" width="960" height="210" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.2"/>
+<text x="36" y="586" font-family="Liberation Sans" font-size="19" font-weight="bold" fill="#123a6b" text-anchor="start">Transaction</text>
+<text x="36" y="606" font-family="Liberation Sans" font-size="14" font-weight="normal" fill="#52677d" text-anchor="start">exchange_transactions.status</text>
+<rect x="40" y="615" width="210" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="145.0" y="648.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">PENDING_HANDOVER</text>
+<rect x="360" y="660" width="180" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="450.0" y="693.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">ACTIVE_LOAN</text>
+<rect x="650" y="615" width="170" height="54" rx="27" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.2"/>
+<text x="735.0" y="648.0" font-family="Liberation Sans" font-size="18" font-weight="bold" fill="#123a6b" text-anchor="middle">COMPLETED</text>
+<line x1="250" y1="630" x2="642.35" y2="630.0" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="650,630 642.2057713659401,634.5 642.2057713659401,625.5" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="358.64" y="612.0" width="182.72000000000003" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="450.0" y="624.0" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">sale / donation handover</text>
+<line x1="250" y1="650" x2="352.7101177828985" y2="682.6804920218314" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="360,685 351.20826214154044,686.92492738256 353.937095057033,678.3485953624406" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="260.96" y="649.5" width="88.08000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="305.0" y="661.5" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">loan starts</text>
+<line x1="540" y1="675" x2="642.5402336531953" y2="651.6954014424556" stroke="#52677d" stroke-width="1.5"/>
+<polygon points="650,650 643.3968865395279,656.1154634025667 641.4022966072272,647.3392677004435" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="569.16" y="644.5" width="51.68000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="595.0" y="656.5" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">return</text></svg>

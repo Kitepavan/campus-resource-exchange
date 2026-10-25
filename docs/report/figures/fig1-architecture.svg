@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="682" viewBox="0 18 1000 682"><rect width="1000" height="700" fill="#ffffff"/><rect x="150" y="40" width="820" height="85" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.0"/>
+<rect x="150" y="40" width="6" height="85" rx="3" fill="#123a6b" stroke="none" stroke-width="0"/>
+<text x="22" y="67" font-family="Liberation Sans" font-size="14" font-weight="bold" fill="#123a6b" text-anchor="start">Presentation</text>
+<text x="22" y="85" font-family="Liberation Sans" font-size="10.5" font-weight="normal" fill="#52677d" text-anchor="start">browser and views</text>
+<rect x="165" y="54" width="350" height="58" rx="8" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.3"/>
+<text x="340.0" y="80.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">Browser</text>
+<text x="340.0" y="104.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">student or administrator</text>
+<rect x="545" y="54" width="410" height="58" rx="8" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.3"/>
+<text x="750.0" y="80.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">JSP 3.1 + JSTL views</text>
+<text x="750.0" y="104.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">escaped output · no scriptlets</text>
+<rect x="150" y="145" width="820" height="100" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.0"/>
+<rect x="150" y="145" width="6" height="100" rx="3" fill="#0f766e" stroke="none" stroke-width="0"/>
+<text x="22" y="172" font-family="Liberation Sans" font-size="14" font-weight="bold" fill="#0f766e" text-anchor="start">Web</text>
+<text x="22" y="190" font-family="Liberation Sans" font-size="10.5" font-weight="normal" fill="#52677d" text-anchor="start">controllers</text>
+<rect x="165" y="160" width="275" height="70" rx="8" fill="#e6f4f1" stroke="#0f766e" stroke-width="1.3"/>
+<text x="302.5" y="192.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">SecurityFilter</text>
+<text x="302.5" y="216.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">session · roles · CSRF · headers</text>
+<rect x="465" y="160" width="490" height="70" rx="8" fill="#e6f4f1" stroke="#0f766e" stroke-width="1.3"/>
+<text x="710.0" y="192.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">Servlet controllers (10)</text>
+<text x="710.0" y="216.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">routing · validation · flash</text>
+<rect x="150" y="265" width="820" height="85" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.0"/>
+<rect x="150" y="265" width="6" height="85" rx="3" fill="#123a6b" stroke="none" stroke-width="0"/>
+<text x="22" y="292" font-family="Liberation Sans" font-size="14" font-weight="bold" fill="#123a6b" text-anchor="start">Business</text>
+<text x="22" y="310" font-family="Liberation Sans" font-size="10.5" font-weight="normal" fill="#52677d" text-anchor="start">services</text>
+<rect x="165" y="279" width="790" height="58" rx="8" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.3"/>
+<text x="560.0" y="305.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">Services</text>
+<text x="560.0" y="329.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">Auth · Resource · Request · Transaction · Review · Admin · Backup</text>
+<rect x="150" y="370" width="820" height="95" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.0"/>
+<rect x="150" y="370" width="6" height="95" rx="3" fill="#0f766e" stroke="none" stroke-width="0"/>
+<text x="22" y="397" font-family="Liberation Sans" font-size="14" font-weight="bold" fill="#0f766e" text-anchor="start">Data access</text>
+<text x="22" y="415" font-family="Liberation Sans" font-size="10.5" font-weight="normal" fill="#52677d" text-anchor="start">JDBC and DAOs</text>
+<rect x="165" y="384" width="510" height="66" rx="8" fill="#e6f4f1" stroke="#0f766e" stroke-width="1.3"/>
+<text x="420.0" y="414.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">DAO layer (5 DAOs)</text>
+<text x="420.0" y="438.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">PreparedStatement · row mapping</text>
+<rect x="700" y="384" width="255" height="66" rx="8" fill="#e6f4f1" stroke="#0f766e" stroke-width="1.3"/>
+<text x="827.5" y="414.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">JDBC</text>
+<text x="827.5" y="438.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">connections · locks</text>
+<rect x="150" y="485" width="820" height="140" rx="8" fill="#f5f8fc" stroke="#dbe5ef" stroke-width="1.0"/>
+<rect x="150" y="485" width="6" height="140" rx="3" fill="#123a6b" stroke="none" stroke-width="0"/>
+<text x="22" y="512" font-family="Liberation Sans" font-size="14" font-weight="bold" fill="#123a6b" text-anchor="start">Storage</text>
+<text x="22" y="530" font-family="Liberation Sans" font-size="10.5" font-weight="normal" fill="#52677d" text-anchor="start">MySQL and files</text>
+<rect x="165" y="500" width="320" height="110" rx="8" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.3"/>
+<text x="325.0" y="542.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">MySQL 8</text>
+<text x="325.0" y="566.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">users · resources · requests</text>
+<text x="325.0" y="584.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">transactions · reviews</text>
+<rect x="510" y="500" width="210" height="110" rx="8" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.3"/>
+<text x="615.0" y="542.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">Upload directory</text>
+<text x="615.0" y="566.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">JPEG / PNG / GIF</text>
+<text x="615.0" y="584.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">UUID filenames</text>
+<rect x="745" y="500" width="210" height="110" rx="8" fill="#eaf1f9" stroke="#123a6b" stroke-width="1.3"/>
+<text x="850.0" y="542.5" font-family="Liberation Sans" font-size="21" font-weight="bold" fill="#102a43" text-anchor="middle">Backup directory</text>
+<text x="850.0" y="566.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">catalog-*.ser</text>
+<text x="850.0" y="584.5" font-family="Liberation Sans" font-size="16" font-weight="normal" fill="#52677d" text-anchor="middle">ObjectInputFilter</text>
+<line x1="310" y1="112" x2="310.0" y2="152.35" stroke="#52677d" stroke-width="1.6"/>
+<polygon points="310,160 305.5,152.20577136594005 314.5,152.20577136594005" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="262.32" y="118.0" width="95.36000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="310.0" y="130.0" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">HTTP request</text>
+<line x1="880" y1="160" x2="880.0" y2="119.65" stroke="#52677d" stroke-width="1.6" stroke-dasharray="4 4"/>
+<polygon points="880,112 884.5,119.79422863405995 875.5,119.79422863405995" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="861.44" y="118.0" width="37.120000000000005" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="880.0" y="130.0" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">HTML</text>
+<line x1="510" y1="230" x2="510.0" y2="271.35" stroke="#52677d" stroke-width="1.6"/>
+<polygon points="510,279 505.5,271.20577136594005 514.5,271.20577136594005" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="458.68" y="236.5" width="102.64000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="510.0" y="248.5" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">service calls</text>
+<line x1="510" y1="337" x2="510.0" y2="376.35" stroke="#52677d" stroke-width="1.6"/>
+<polygon points="510,384 505.5,376.20577136594005 514.5,376.20577136594005" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="473.24" y="342.5" width="73.52000000000001" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="510.0" y="354.5" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">DAO calls</text>
+<line x1="330" y1="450" x2="330.0" y2="492.35" stroke="#52677d" stroke-width="1.6"/>
+<polygon points="330,500 325.5,492.20577136594005 334.5,492.20577136594005" fill="#52677d" stroke="none" stroke-width="1"/>
+<rect x="315.08" y="457.0" width="29.840000000000003" height="18" rx="2" fill="#ffffff" stroke="none" stroke-width="0"/>
+<text x="330.0" y="469.0" font-family="Liberation Sans" font-size="13" font-weight="normal" fill="#334e68" text-anchor="middle">SQL</text>
+<rect x="165" y="655" width="790" height="28" rx="5" fill="#eef2f7" stroke="none" stroke-width="0"/>
+<text x="175" y="674" font-family="Liberation Sans" font-size="12.5" font-weight="Liberation Mono" fill="#334e68" text-anchor="start">AppConfig — DB_URL · DB_USER · DB_PASSWORD · UPLOAD_DIR · BACKUP_DIR</text></svg>
