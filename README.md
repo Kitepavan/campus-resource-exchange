@@ -415,7 +415,7 @@ Refinement after the first run:
 - Owner-side request messages are now unambiguous: the dashboard's "Received"
   list shows the message, the incoming table labels empty ones "No message
   provided.", and `scripts/smoke.sh` asserts the owner sees the message text.
-  Re-verified with a full 23/23 smoke pass and 50/50 unit tests.
+  Re-verified with a full 23/23 smoke pass and 53/53 unit tests.
 
 ---
 
@@ -430,3 +430,26 @@ Refinement after the first run:
 | Upload rejected | Image over 5 MB, not JPEG/PNG/GIF, or corrupt |
 | `The form expired` 403 | CSRF token missing/stale — reload the page and resubmit |
 | Port 8080 in use | Change the connector port in `conf/server.xml` and update `BASE_URL` |
+
+---
+
+## 17. Project report
+
+`docs/report/report.md` is the source of the written report;
+`docs/report/report.html` and `Campus_Resource_Exchange_Report.pdf` are generated
+from it by `docs/report/build_report.py` (Markdown to HTML, then WeasyPrint for
+the PDF). The diagrams are generated separately by `docs/report/make_figures.py`.
+
+To rebuild after editing `report.md`, create the virtual environment the build
+script expects at the repository root:
+
+```bash
+python3 -m venv .report-venv
+.report-venv/bin/pip install weasyprint markdown
+.report-venv/bin/python docs/report/build_report.py
+```
+
+WeasyPrint needs Pango and Cairo at the system level (`libpango-1.0-0`,
+`libcairo2` on Debian/Ubuntu). `.report-venv/` is ignored by Git. Regenerate the
+HTML and PDF in the same commit as any `report.md` change, so the source and the
+rendered report never disagree.

@@ -10,3 +10,5 @@ target/
 *.log
 config/application.properties
 application.properties
+.report-venv/
+__pycache__/
