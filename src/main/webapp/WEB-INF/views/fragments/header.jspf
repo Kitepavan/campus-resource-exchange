@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Campus Resource Exchange</title>
-    <link rel="stylesheet" href="${ctx}/assets/css/styles.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/styles.css?v=2">
 </head>
 <body>
 <header class="site-header">

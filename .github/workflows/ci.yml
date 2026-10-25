@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: Build and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - run: mvn -B clean package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: war
+          path: target/campus-resource-exchange.war
+
+  smoke:
+    name: Smoke test against Tomcat + MySQL
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: campus_exchange
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    env:
+      DB_URL: jdbc:mysql://127.0.0.1:3306/campus_exchange?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_USER: root
+      DB_PASSWORD: root
+      UPLOAD_DIR: ${{ github.workspace }}/uploads
+      BACKUP_DIR: ${{ github.workspace }}/backups
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Load schema and sample data
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot campus_exchange < database/schema.sql
+          mysql -h 127.0.0.1 -uroot -proot campus_exchange < database/sample_data.sql
+
+      - name: Install Tomcat 10.1
+        run: |
+          curl -fsSL -o tomcat.tar.gz \
+            https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.55/bin/apache-tomcat-10.1.55.tar.gz
+          tar xzf tomcat.tar.gz
+
+      - name: Build and deploy
+        run: |
+          mvn -B clean package -DskipTests
+          cp target/campus-resource-exchange.war apache-tomcat-10.1.55/webapps/
+
+      - name: Start Tomcat
+        run: |
+          apache-tomcat-10.1.55/bin/startup.sh
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://localhost:8080/campus-resource-exchange/login && exit 0
+            sleep 2
+          done
+          echo "Tomcat did not start"; tail -n 60 apache-tomcat-10.1.55/logs/catalina.out; exit 1
+
+      - name: Smoke test
+        run: BASE_URL=http://localhost:8080/campus-resource-exchange bash scripts/smoke.sh
+
+      - name: Tomcat logs on failure
+        if: failure()
+        run: tail -n 100 apache-tomcat-10.1.55/logs/catalina.out

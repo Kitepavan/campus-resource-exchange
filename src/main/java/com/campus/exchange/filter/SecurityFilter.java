@@ -48,6 +48,13 @@ public class SecurityFilter implements Filter {
         response.setHeader("Referrer-Policy", "same-origin");
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
+
+        // Assets need no session, user lookup, or database round trip.
+        if (isStatic(path)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         HttpSession session = request.getSession(true);
         CsrfUtil.ensureToken(session);
 
@@ -110,6 +117,12 @@ public class SecurityFilter implements Filter {
         }
     }
 
+    private boolean isStatic(String path) {
+        return path.startsWith("/assets/")
+                || path.startsWith("/images/")
+                || path.equals("/favicon.ico");
+    }
+
     private boolean isPublic(String path) {
         return path.isEmpty()
                 || path.equals("/")
@@ -119,10 +132,7 @@ public class SecurityFilter implements Filter {
                 || path.equals("/logout")
                 || path.equals("/resources")
                 || path.equals("/resources/")
-                || path.equals("/resources/view")
-                || path.startsWith("/images/")
-                || path.startsWith("/assets/")
-                || path.equals("/favicon.ico");
+                || path.equals("/resources/view");
     }
 
     private boolean requiresStudent(String path) {

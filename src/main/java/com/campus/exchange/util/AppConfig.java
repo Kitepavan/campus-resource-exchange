@@ -44,6 +44,15 @@ public final class AppConfig {
                 .toAbsolutePath().normalize();
     }
 
+    public static int dbPoolSize() {
+        try {
+            int size = Integer.parseInt(read("DB_POOL_SIZE", "10"));
+            return size < 1 ? 10 : size;
+        } catch (NumberFormatException e) {
+            return 10;
+        }
+    }
+
     private static String read(String key, String fallback) {
         String value = System.getenv(key);
         if (value == null || value.isBlank()) {

@@ -4,6 +4,7 @@ import com.campus.exchange.dao.ResourceDAO;
 import com.campus.exchange.exception.AccessDeniedException;
 import com.campus.exchange.exception.ValidationException;
 import com.campus.exchange.model.Book;
+import com.campus.exchange.model.LabEquipment;
 import com.campus.exchange.model.Resource;
 import com.campus.exchange.model.Student;
 import com.campus.exchange.model.enums.Condition;
@@ -112,6 +113,30 @@ class ResourceServiceTest {
         verify(resourceDAO).updateStatus(11, ResourceStatus.INACTIVE);
     }
 
+    @Test
+    void lendingNeedsAPositiveFee() throws Exception {
+        LabEquipment lend = validLend(null);
+
+        assertThrows(ValidationException.class,
+                () -> resourceService.create(lend, verifiedStudent(5)),
+                "a LEND listing without a fee must be rejected");
+        assertThrows(ValidationException.class,
+                () -> resourceService.create(validLend(new BigDecimal("1000001")), verifiedStudent(5)),
+                "a fee above the maximum must be rejected");
+
+        when(resourceDAO.insert(any(Resource.class))).thenReturn(11);
+        Resource created = resourceService.create(validLend(new BigDecimal("200.00")),
+                verifiedStudent(5));
+
+        assertEquals(new BigDecimal("200.00"), created.getPrice());
+        assertEquals("200.00 lending fee", created.getPriceLabel());
+    }
+
+    @Test
+    void legacyLendWithoutFeeIsLabelledClearly() {
+        assertEquals("Fee not set", validLend(null).getPriceLabel());
+    }
+
     private Student verifiedStudent(int userId) {
         Student student = new Student();
         student.setUserId(userId);
@@ -151,5 +176,19 @@ class ResourceServiceTest {
         book.setPrice(BigDecimal.ONE);
         book.setPickupLocation("Main Library");
         return book;
+    }
+
+    private LabEquipment validLend(BigDecimal fee) {
+        LabEquipment equipment = new LabEquipment();
+        equipment.setTitle("Oscilloscope");
+        equipment.setDescription("Two-channel scope for the electronics lab, all probes included.");
+        equipment.setCategory("Electronics");
+        equipment.setResourceType(ResourceType.LAB_EQUIPMENT);
+        equipment.setCondition(Condition.GOOD);
+        equipment.setExchangeType(ExchangeType.LEND);
+        equipment.setPrice(fee);
+        equipment.setLendingTerms("7 days, return all probes");
+        equipment.setPickupLocation("Electronics Lab");
+        return equipment;
     }
 }

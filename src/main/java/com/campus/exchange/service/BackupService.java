@@ -213,11 +213,9 @@ public class BackupService {
                 resource.setStatus(status == ResourceStatus.INACTIVE
                         ? ResourceStatus.INACTIVE
                         : ResourceStatus.AVAILABLE);
-                ResourceService.validate(resource);
-                // Restore the intended availability after validation normalizes it.
-                resource.setStatus(status == ResourceStatus.INACTIVE
-                        ? ResourceStatus.INACTIVE
-                        : ResourceStatus.AVAILABLE);
+                // Structure only: a backup must restore even if the business rules
+                // changed since it was written (e.g. lending fees became mandatory).
+                validateRestorable(resource);
                 resources.add(resource);
             } catch (ValidationException e) {
                 throw new ValidationException("Backup item " + index + ": " + e.getMessage());
@@ -230,6 +228,24 @@ public class BackupService {
             index++;
         }
         return resources;
+    }
+
+    /**
+     * Checks that a stored row can be inserted again. Deliberately ignores the
+     * current business rules so backups survive later rule changes.
+     */
+    private static void validateRestorable(Resource resource) {
+        if (isBlank(resource.getTitle()) || isBlank(resource.getDescription())
+                || isBlank(resource.getCategory()) || isBlank(resource.getPickupLocation())) {
+            throw new ValidationException("required fields are missing.");
+        }
+        if (resource.getPrice() != null && resource.getPrice().signum() < 0) {
+            throw new ValidationException("price must not be negative.");
+        }
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     ResourceCatalogBackup readBackup(Path path) {

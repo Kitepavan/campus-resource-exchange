@@ -74,8 +74,12 @@ public abstract class Resource implements Searchable {
     }
 
     public String getPriceLabel() {
-        if (exchangeType == ExchangeType.DONATE || price == null || price.signum() == 0) {
+        if (exchangeType == ExchangeType.DONATE) {
             return "Free";
+        }
+        if (price == null || price.signum() == 0) {
+            // Lending fees are mandatory, so a bare LEND row is legacy data.
+            return exchangeType == ExchangeType.LEND ? "Fee not set" : "Free";
         }
         return exchangeType == ExchangeType.LEND
                 ? price.toPlainString() + " lending fee"

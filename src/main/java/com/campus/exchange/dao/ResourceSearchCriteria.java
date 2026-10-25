@@ -21,6 +21,8 @@ public class ResourceSearchCriteria {
     private String courseCode;
     private String pickupLocation;
     private String sort;
+    private int limit;
+    private int offset;
 
     public String getSort() {
         return sort;
@@ -28,6 +30,22 @@ public class ResourceSearchCriteria {
 
     public void setSort(String sort) {
         this.sort = sort;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public boolean isEmpty() {

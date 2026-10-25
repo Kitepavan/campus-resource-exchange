@@ -122,9 +122,11 @@ class BackupServiceTest {
 
     @Test
     void invalidItemsAreRejectedBeforeRestore() throws Exception {
-        ResourceBackupItem badPrice = ResourceBackupItem.from(book(11, OWNER_ID, "Zero Price"));
-        badPrice.setPrice(BigDecimal.ZERO);
-        assertRejected("Zero Price", badPrice);
+        when(userDAO.findById(OWNER_ID)).thenReturn(verifiedStudent(OWNER_ID));
+
+        ResourceBackupItem badPrice = ResourceBackupItem.from(book(11, OWNER_ID, "Negative Price"));
+        badPrice.setPrice(new BigDecimal("-1.00"));
+        assertRejected("Negative Price", badPrice);
 
         ResourceBackupItem badEnum = ResourceBackupItem.from(book(12, OWNER_ID, "Bad Enum"));
         badEnum.setExchangeType("BORROW");
@@ -135,6 +137,23 @@ class BackupServiceTest {
         ValidationException error = assertThrows(ValidationException.class,
                 () -> restore(missingOwner));
         assertTrue(error.getMessage().contains("missing owner"));
+    }
+
+    @Test
+    void lendWithoutFeeStillRestoresAfterTheFeeRuleChanged() throws Exception {
+        when(userDAO.findById(OWNER_ID)).thenReturn(verifiedStudent(OWNER_ID));
+        ResourceBackupItem legacy = ResourceBackupItem.from(book(11, OWNER_ID, "Legacy Lend"));
+        legacy.setExchangeType("LEND");
+        legacy.setPrice(null);
+
+        try (MockedStatic<DbConnection> db = mockStatic(DbConnection.class)) {
+            Connection conn = mock(Connection.class);
+            db.when(DbConnection::getConnection).thenReturn(conn);
+            when(resourceDAO.existsByOwnerAndTitle(conn, OWNER_ID, "Legacy Lend")).thenReturn(false);
+
+            assertEquals(1, restore(legacy), "a backup taken before fees were mandatory must restore");
+            verify(resourceDAO).insert(eq(conn), any(Resource.class));
+        }
     }
 
     @Test

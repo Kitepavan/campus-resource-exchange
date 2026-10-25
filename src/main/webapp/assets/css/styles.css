@@ -245,6 +245,20 @@ textarea:focus-visible,
     color: var(--navy-deep);
 }
 
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 1.75rem 0 0.5rem;
+}
+
+.button-ghost.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .button-danger {
     background: var(--danger);
 }

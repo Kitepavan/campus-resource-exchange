@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 public final class UploadUtil {
 
     public static final long MAX_IMAGE_BYTES = 5L * 1024 * 1024;
+    /** Guards against decompression bombs: a 5 MB PNG can decode to gigabytes. */
+    public static final long MAX_IMAGE_PIXELS = 40_000_000L;
 
     private static final Map<String, String> CONTENT_TYPES = Map.of(
             "image/jpeg", "jpg",
@@ -64,8 +66,12 @@ public final class UploadUtil {
         }
 
         try (InputStream input = part.getInputStream()) {
-            if (ImageIO.read(input) == null) {
+            var image = ImageIO.read(input);
+            if (image == null) {
                 throw new ValidationException("The uploaded file is not a valid image.");
+            }
+            if ((long) image.getWidth() * image.getHeight() > MAX_IMAGE_PIXELS) {
+                throw new ValidationException("Image dimensions are too large.");
             }
         }
 

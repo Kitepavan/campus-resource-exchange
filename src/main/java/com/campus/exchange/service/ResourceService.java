@@ -118,6 +118,14 @@ public class ResourceService {
         }
     }
 
+    public int count(ResourceSearchCriteria criteria) {
+        try {
+            return resourceDAO.count(criteria);
+        } catch (SQLException e) {
+            throw DbErrors.wrap(LOG, "Counting resources", e);
+        }
+    }
+
     public List<Resource> findByOwner(int ownerId) {
         try {
             return resourceDAO.findByOwner(ownerId);

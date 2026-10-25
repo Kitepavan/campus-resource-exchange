@@ -24,12 +24,19 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @WebServlet("/resources/*")
 @MultipartConfig(maxFileSize = 5L * 1024 * 1024, maxRequestSize = 6L * 1024 * 1024,
         fileSizeThreshold = 1024 * 1024)
 public class ResourceServlet extends BaseServlet {
+
+    private static final int PAGE_SIZE = 12;
+    private static final List<String> FILTER_PARAMS = List.of("keyword", "category",
+            "resourceType", "exchangeType", "condition", "minPrice", "maxPrice",
+            "courseCode", "pickupLocation", "sort");
 
     private final ResourceService resourceService = new ResourceService();
     private final AuthService authService = new AuthService();
@@ -75,12 +82,45 @@ public class ResourceServlet extends BaseServlet {
         criteria.setMaxPrice(safeDecimal(request, "maxPrice"));
         criteria.setSort(trimmedParam(request, "sort"));
 
+        int total = resourceService.count(criteria);
+        int pageCount = Math.max(1, (total + PAGE_SIZE - 1) / PAGE_SIZE);
+        int page = 1;
+        try {
+            Integer requested = optionalIntParam(request, "page");
+            if (requested != null && requested > 0) {
+                page = requested;
+            }
+        } catch (ValidationException ignored) {
+            // A malformed page number just means page 1.
+        }
+        page = Math.min(page, pageCount);
+        criteria.setLimit(PAGE_SIZE);
+        criteria.setOffset((page - 1) * PAGE_SIZE);
+
         List<Resource> resources = resourceService.search(criteria);
         request.setAttribute("resources", resources);
         request.setAttribute("criteria", criteria);
         request.setAttribute("categories", resourceService.categories());
+        request.setAttribute("page", page);
+        request.setAttribute("pageCount", pageCount);
+        request.setAttribute("total", total);
+        request.setAttribute("queryBase", queryBase(request));
         setFormOptions(request);
         render(request, response, "resources/list.jsp");
+    }
+
+    /** Current filters as a query string, so page links keep them. */
+    private String queryBase(HttpServletRequest request) {
+        StringBuilder query = new StringBuilder();
+        for (String name : FILTER_PARAMS) {
+            String value = trimmedParam(request, name);
+            if (value != null && !value.isEmpty()) {
+                query.append(name).append('=')
+                        .append(URLEncoder.encode(value, StandardCharsets.UTF_8))
+                        .append('&');
+            }
+        }
+        return query.toString();
     }
 
     private void view(HttpServletRequest request, HttpServletResponse response)

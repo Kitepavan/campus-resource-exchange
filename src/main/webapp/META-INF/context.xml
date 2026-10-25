@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Packaged Tomcat context. The session cookie is same-site lax so it is never
+  sent by cross-site requests; enable "secure" here (or in Tomcat's conf) when
+  the app runs behind HTTPS.
+-->
+<Context>
+    <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
+                     sameSiteCookies="lax"/>
+</Context>

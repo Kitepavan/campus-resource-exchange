@@ -51,6 +51,17 @@
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <!-- matches the slf4j-api version HikariCP 5.1.0 brings in -->
+            <version>1.7.36</version>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

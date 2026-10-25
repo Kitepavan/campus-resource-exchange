@@ -43,4 +43,9 @@ public class AppContextListener implements ServletContextListener {
                     + "and DB_PASSWORD in the Tomcat environment.", e);
         }
     }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent event) {
+        DbConnection.close();
+    }
 }

@@ -122,9 +122,56 @@ public class ResourceDAO {
     }
 
     public List<Resource> search(ResourceSearchCriteria criteria) throws SQLException {
-        StringBuilder sql = new StringBuilder(
-                "SELECT * FROM resources WHERE status = 'AVAILABLE'");
         List<Object> params = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM resources")
+                .append(whereClause(criteria, params));
+        String sort = criteria.getSort() == null ? "" : criteria.getSort();
+        sql.append(switch (sort) {
+            case "priceAsc" -> " ORDER BY price IS NULL, price ASC, created_at DESC";
+            case "priceDesc" -> " ORDER BY price DESC, created_at DESC";
+            case "condition" -> " ORDER BY `condition` ASC, created_at DESC";
+            default -> " ORDER BY created_at DESC";
+        });
+        if (criteria.getLimit() > 0) {
+            sql.append(" LIMIT ? OFFSET ?");
+        }
+
+        List<Resource> resources = new ArrayList<>();
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int index = 0;
+            for (Object param : params) {
+                ps.setObject(++index, param);
+            }
+            if (criteria.getLimit() > 0) {
+                ps.setInt(++index, criteria.getLimit());
+                ps.setInt(++index, Math.max(0, criteria.getOffset()));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    resources.add(map(rs));
+                }
+            }
+        }
+        return resources;
+    }
+
+    public int count(ResourceSearchCriteria criteria) throws SQLException {
+        List<Object> params = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM resources" + whereClause(criteria, params);
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    private String whereClause(ResourceSearchCriteria criteria, List<Object> params) {
+        StringBuilder sql = new StringBuilder(" WHERE status = 'AVAILABLE'");
 
         if (criteria.getKeyword() != null && !criteria.getKeyword().isBlank()) {
             sql.append(" AND (title LIKE ? OR description LIKE ? OR category LIKE ? "
@@ -167,27 +214,7 @@ public class ResourceDAO {
             sql.append(" AND pickup_location LIKE ?");
             params.add("%" + criteria.getPickupLocation().trim() + "%");
         }
-        String sort = criteria.getSort() == null ? "" : criteria.getSort();
-        sql.append(switch (sort) {
-            case "priceAsc" -> " ORDER BY price IS NULL, price ASC, created_at DESC";
-            case "priceDesc" -> " ORDER BY price DESC, created_at DESC";
-            case "condition" -> " ORDER BY `condition` ASC, created_at DESC";
-            default -> " ORDER BY created_at DESC";
-        });
-
-        List<Resource> resources = new ArrayList<>();
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    resources.add(map(rs));
-                }
-            }
-        }
-        return resources;
+        return sql.toString();
     }
 
     public List<Resource> findByOwner(int ownerId) throws SQLException {

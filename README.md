@@ -122,6 +122,14 @@ mysql -u campus_app -p"$DB_PASSWORD" campus_exchange < database/sample_data.sql
 
 > `schema.sql` drops and recreates its tables, so **all data is lost** on reset.
 
+Upgrading an existing database (no reset) — apply the numbered scripts in
+`database/migrations/` in order, for example:
+
+```bash
+mysql -u campus_app -p"$DB_PASSWORD" campus_exchange \
+  < database/migrations/001_add_daily_essential.sql
+```
+
 ---
 
 ## 6. Configuration
@@ -136,6 +144,7 @@ All configuration comes from environment variables read by
 | `DB_PASSWORD` | **yes** | database password | — (startup fails without it) |
 | `UPLOAD_DIR` | no | listing images | `~/campus-exchange/uploads` |
 | `BACKUP_DIR` | no | `.ser` backup files | `~/campus-exchange/backups` |
+| `DB_POOL_SIZE` | no | max pooled database connections (HikariCP) | `10` |
 
 Put them in Tomcat's `bin/setenv.sh` (outside the repository):
 
@@ -156,11 +165,19 @@ mkdir -p "$HOME/campus-exchange/uploads" "$HOME/campus-exchange/backups"
 
 ## 7. Build, test, deploy
 
+One command does everything (build if stale, deploy, start, wait for a 200):
+
+```bash
+./run.sh            # or ./run.sh --skip-build / ./run.sh stop / ./run.sh smoke
+```
+
+By hand:
+
 ```bash
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH="$JAVA_HOME/bin:$HOME/tools/apache-maven-3.9.12/bin:$PATH"
 
-mvn clean test        # 50 unit tests, no MySQL required
+mvn clean test        # unit tests, no MySQL required
 mvn package           # target/campus-resource-exchange.war
 
 cp target/campus-resource-exchange.war "$CATALINA_HOME/webapps/"
@@ -209,7 +226,14 @@ BASE_URL=http://localhost:8080/campus-resource-exchange bash scripts/smoke.sh
 
 The script drives the real HTTP interface with `curl` and checks status codes and
 page markers at every step. It creates unique students and listings per run, so it
-is safe to repeat. It covers:
+is safe to repeat. `./run.sh smoke` runs it and then removes that data again on a
+local database; to clean up by hand:
+
+```bash
+bash scripts/clean-smoke.sh
+```
+
+It covers:
 
 1. Home page + database connectivity
 2. Admin login
@@ -336,10 +360,12 @@ message is shown explicitly as "No message provided." instead of a blank cell.
 - No "Other" resource type; no listing reactivation flow.
 - No email verification, password reset, or email notifications.
 - Backups are not downloadable through the browser.
-- No pagination on catalogue/admin lists.
+- Catalogue lists are paginated (12 per page); admin lists still are not.
 - One image per listing; no thumbnails or cropping.
+- Login is rate limited in memory (5 failures per email per 15 minutes), not
+  across restarts or multiple Tomcat instances.
 - No automated browser/UI tests; `scripts/smoke.sh` + the manual checklist cover
-  the flows.
+  the flows. GitHub Actions runs the unit tests and the smoke test (`ci.yml`).
 
 ---
 

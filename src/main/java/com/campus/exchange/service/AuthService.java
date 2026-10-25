@@ -12,6 +12,8 @@ import com.campus.exchange.util.ValidationUtil;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -21,6 +23,12 @@ public class AuthService {
 
     private static final Logger LOG = Logger.getLogger(AuthService.class.getName());
 
+    private static final int MAX_FAILED_LOGINS = 5;
+    private static final long LOCK_MILLIS = 15 * 60 * 1000L;
+
+    /** Recent failed logins per email, so one account cannot be brute forced. */
+    private final Map<String, Failures> failures = new ConcurrentHashMap<>();
+
     private final UserDAO userDAO;
 
     public AuthService() {
@@ -29,6 +37,11 @@ public class AuthService {
 
     public AuthService(UserDAO userDAO) {
         this.userDAO = userDAO;
+    }
+
+    private static final class Failures {
+        private int count;
+        private long windowStart = System.currentTimeMillis();
     }
 
     public Student register(String fullName, String email, String studentId,
@@ -68,17 +81,53 @@ public class AuthService {
     public User login(String email, String rawPassword) {
         String normalizedEmail = ValidationUtil.email(email);
         String password = ValidationUtil.notBlank(rawPassword, "Password");
+        if (isLocked(normalizedEmail)) {
+            throw new ValidationException(
+                    "Too many failed login attempts. Try again in 15 minutes.");
+        }
         try {
             User user = userDAO.findByEmail(normalizedEmail);
             if (user == null || !PasswordUtil.matches(password, user.getPasswordHash())) {
+                recordFailure(normalizedEmail);
                 throw new ValidationException("Invalid email or password.");
             }
             if (!user.isActive()) {
                 throw new ValidationException("This account has been suspended.");
             }
+            failures.remove(normalizedEmail);
             return user;
         } catch (SQLException e) {
             throw DbErrors.wrap(LOG, "Logging in", e);
+        }
+    }
+
+    private boolean isLocked(String email) {
+        Failures attempts = failures.get(email);
+        if (attempts == null) {
+            return false;
+        }
+        synchronized (attempts) {
+            if (System.currentTimeMillis() - attempts.windowStart > LOCK_MILLIS) {
+                failures.remove(email);
+                return false;
+            }
+            return attempts.count >= MAX_FAILED_LOGINS;
+        }
+    }
+
+    private void recordFailure(String email) {
+        if (failures.size() > 10_000) {
+            long now = System.currentTimeMillis();
+            failures.entrySet().removeIf(e -> now - e.getValue().windowStart > LOCK_MILLIS);
+        }
+        Failures attempts = failures.computeIfAbsent(email, key -> new Failures());
+        synchronized (attempts) {
+            long now = System.currentTimeMillis();
+            if (now - attempts.windowStart > LOCK_MILLIS) {
+                attempts.count = 0;
+                attempts.windowStart = now;
+            }
+            attempts.count++;
         }
     }
 

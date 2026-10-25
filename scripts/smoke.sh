@@ -179,7 +179,7 @@ create_listing() { # <jar> <out prefix> <title> <exchangeType> <price> <terms> [
         -F "courseCode=SMK101"
         -F "pickupLocation=Smoke Test Library"
     )
-    if [[ "$exchange" == "SELL" ]]; then
+    if [[ "$exchange" != "DONATE" ]]; then
         args+=(-F "price=$price")
     fi
     if [[ "$exchange" == "LEND" ]]; then
@@ -361,7 +361,7 @@ expect_body "$WORK/review-dup.done" "already been reviewed" "duplicate review fl
 # --- 8. LEND flow: active loan then return --------------------------------
 
 say "Owner creates a LEND listing"
-create_listing "$OWNER_JAR" "lend" "$LEND_TITLE" "LEND" "" "14 days, return to the library desk"
+create_listing "$OWNER_JAR" "lend" "$LEND_TITLE" "LEND" "200.00" "14 days, return to the library desk"
 LEND_RESOURCE_ID="$CREATED_RESOURCE_ID"
 
 say "Second student requests the LEND listing"

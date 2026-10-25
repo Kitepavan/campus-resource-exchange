@@ -150,6 +150,29 @@
                     </article>
                 </c:forEach>
             </div>
+            <c:if test="${pageCount > 1}">
+                <nav class="pagination" aria-label="Catalogue pages">
+                    <c:choose>
+                        <c:when test="${page > 1}">
+                            <a class="button button-ghost"
+                               href="${ctx}/resources?${queryBase}page=${page - 1}">Previous</a>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="button button-ghost is-disabled">Previous</span>
+                        </c:otherwise>
+                    </c:choose>
+                    <span class="muted">Page ${page} of ${pageCount} &middot; ${total} listings</span>
+                    <c:choose>
+                        <c:when test="${page < pageCount}">
+                            <a class="button button-ghost"
+                               href="${ctx}/resources?${queryBase}page=${page + 1}">Next</a>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="button button-ghost is-disabled">Next</span>
+                        </c:otherwise>
+                    </c:choose>
+                </nav>
+            </c:if>
         </c:otherwise>
     </c:choose>
 </section>
