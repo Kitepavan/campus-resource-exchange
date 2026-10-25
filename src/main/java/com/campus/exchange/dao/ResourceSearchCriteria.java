@@ -20,6 +20,15 @@ public class ResourceSearchCriteria {
     private BigDecimal maxPrice;
     private String courseCode;
     private String pickupLocation;
+    private String sort;
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
 
     public boolean isEmpty() {
         return isBlank(keyword) && isBlank(category) && resourceType == null

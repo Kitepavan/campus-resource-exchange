@@ -5,6 +5,6 @@
         <span>Built with Jakarta Servlets, JSP, JDBC, and MySQL.</span>
     </div>
 </footer>
-<script src="${ctx}/assets/js/app.js" defer></script>
+<script src="${ctx}/assets/js/app.js?v=3" defer></script>
 </body>
 </html>

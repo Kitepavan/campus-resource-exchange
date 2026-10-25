@@ -73,6 +73,7 @@ public class ResourceServlet extends BaseServlet {
         criteria.setCondition(safeEnum(request, "condition", Condition.class));
         criteria.setMinPrice(safeDecimal(request, "minPrice"));
         criteria.setMaxPrice(safeDecimal(request, "maxPrice"));
+        criteria.setSort(trimmedParam(request, "sort"));
 
         List<Resource> resources = resourceService.search(criteria);
         request.setAttribute("resources", resources);
@@ -248,6 +249,7 @@ public class ResourceServlet extends BaseServlet {
         request.setAttribute("resourceTypes", ResourceType.values());
         request.setAttribute("conditions", Condition.values());
         request.setAttribute("exchangeTypes", ExchangeType.values());
+        request.setAttribute("categories", resourceService.categories());
     }
 
     private <E extends Enum<E>> E safeEnum(HttpServletRequest request, String name,

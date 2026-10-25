@@ -39,7 +39,7 @@ CREATE TABLE resources (
     title           VARCHAR(150) NOT NULL,
     description     TEXT NOT NULL,
     category        VARCHAR(80) NOT NULL,
-    resource_type   ENUM('BOOK', 'LAB_EQUIPMENT', 'STUDY_MATERIAL') NOT NULL,
+    resource_type   ENUM('BOOK', 'LAB_EQUIPMENT', 'STUDY_MATERIAL', 'DAILY_ESSENTIAL') NOT NULL,
     `condition`     ENUM('NEW', 'LIKE_NEW', 'GOOD', 'FAIR') NOT NULL,
     exchange_type   ENUM('SELL', 'LEND', 'DONATE') NOT NULL,
     price           DECIMAL(10, 2) NULL,

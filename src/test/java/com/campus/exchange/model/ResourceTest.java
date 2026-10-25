@@ -45,13 +45,13 @@ class ResourceTest {
         equipment.setResourceType(ResourceType.LAB_EQUIPMENT);
         equipment.setCondition(Condition.GOOD);
         equipment.setExchangeType(ExchangeType.LEND);
-        equipment.setPrice(new BigDecimal("0.00"));
+        equipment.setPrice(new BigDecimal("200.00"));
         equipment.setLendingTerms("7 days, return all parts");
         equipment.setPickupLocation("Electronics Lab");
 
         ResourceService.validate(equipment);
 
-        assertNull(equipment.getPrice());
+        assertEquals(new BigDecimal("200.00"), equipment.getPrice());
         assertEquals("7 days, return all parts", equipment.getLendingTerms());
         assertEquals("Lab equipment: Arduino Uno Kit", equipment.displayDetails());
         assertEquals(7, ((Lendable) equipment).getLoanPeriodDays());

@@ -88,6 +88,15 @@
                 <input type="number" name="maxPrice" min="0" step="0.01"
                        value="${criteria.maxPrice}">
             </label>
+            <label>
+                Sort by
+                <select name="sort">
+                    <option value="">Newest first</option>
+                    <option value="priceAsc" ${criteria.sort == 'priceAsc' ? 'selected' : ''}>Price: low to high</option>
+                    <option value="priceDesc" ${criteria.sort == 'priceDesc' ? 'selected' : ''}>Price: high to low</option>
+                    <option value="condition" ${criteria.sort == 'condition' ? 'selected' : ''}>Best condition first</option>
+                </select>
+            </label>
         </div>
         <div class="filter-actions">
             <button class="button" type="submit">Apply filters</button>

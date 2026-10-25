@@ -42,8 +42,19 @@
             </label>
             <label>
                 Category
-                <input type="text" name="category" required maxlength="80"
-                       placeholder="e.g. Computer Science"
+                <select id="categoryChoice" required>
+                    <option value="">Select category</option>
+                    <c:forEach items="${categories}" var="category">
+                        <option value="${fn:escapeXml(category)}"
+                                ${resource.category == category ? 'selected' : ''}>
+                            <c:out value="${category}"/>
+                        </option>
+                    </c:forEach>
+                    <option value="__new__">+ Create new category</option>
+                </select>
+                <input type="text" id="categoryInput" name="category"
+                       class="${empty resource.category ? 'is-hidden' : ''}" required maxlength="80"
+                       placeholder="New category name, e.g. Hostel Essentials"
                        value="${fn:escapeXml(resource.category)}">
             </label>
         </div>
@@ -77,10 +88,10 @@
 
         <div class="form-row" id="priceRow">
             <label>
-                Price
+                Price / lending fee
                 <input type="number" name="price" min="0" step="0.01" max="1000000"
                        value="${resource.price}">
-                <span class="field-hint">Required when selling. Donations are free.</span>
+                <span class="field-hint">Required when selling or lending. Donations are free.</span>
             </label>
             <label>
                 Course code

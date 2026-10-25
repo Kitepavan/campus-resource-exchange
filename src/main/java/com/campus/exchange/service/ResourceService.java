@@ -12,6 +12,7 @@ import com.campus.exchange.model.Lendable;
 import com.campus.exchange.model.Resource;
 import com.campus.exchange.model.Sellable;
 import com.campus.exchange.model.Student;
+import com.campus.exchange.model.DailyEssential;
 import com.campus.exchange.model.StudyMaterial;
 import com.campus.exchange.model.User;
 import com.campus.exchange.model.enums.ExchangeType;
@@ -50,6 +51,7 @@ public class ResourceService {
             case BOOK -> new Book();
             case LAB_EQUIPMENT -> new LabEquipment();
             case STUDY_MATERIAL -> new StudyMaterial();
+            case DAILY_ESSENTIAL -> new DailyEssential();
         };
     }
 
@@ -209,7 +211,11 @@ public class ResourceService {
                 if (!(resource instanceof Lendable)) {
                     throw new ValidationException("This resource type cannot be lent.");
                 }
-                resource.setPrice(null);
+                BigDecimal fee = ValidationUtil.positive(resource.getPrice(), "Lending fee");
+                if (fee.compareTo(MAX_PRICE) > 0) {
+                    throw new ValidationException("Lending fee must be 1,000,000 or less.");
+                }
+                resource.setPrice(fee);
                 String terms = ValidationUtil.length(
                         resource.getLendingTerms(), "Lending terms", 3, 500);
                 resource.setLendingTerms(terms);

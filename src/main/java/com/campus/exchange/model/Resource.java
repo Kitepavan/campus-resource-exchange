@@ -77,7 +77,9 @@ public abstract class Resource implements Searchable {
         if (exchangeType == ExchangeType.DONATE || price == null || price.signum() == 0) {
             return "Free";
         }
-        return price.toPlainString();
+        return exchangeType == ExchangeType.LEND
+                ? price.toPlainString() + " lending fee"
+                : price.toPlainString();
     }
 
     public int getResourceId() {

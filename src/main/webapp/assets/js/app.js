@@ -30,11 +30,35 @@
             }
             var value = exchange.value;
             if (priceRow) {
-                priceRow.classList.toggle("is-hidden", value !== "SELL");
+                priceRow.classList.toggle("is-hidden", value === "DONATE");
             }
             if (lendingRow) {
                 lendingRow.classList.toggle("is-hidden", value !== "LEND");
             }
+        }
+
+        var categoryChoice = document.getElementById("categoryChoice");
+        var categoryInput = document.getElementById("categoryInput");
+
+        function syncCategory(fromUser) {
+            var creating = categoryChoice.value === "__new__";
+            if (fromUser) {
+                categoryInput.value = creating ? "" : categoryChoice.value;
+            }
+            categoryInput.classList.toggle("is-hidden", !creating);
+            if (creating && fromUser) {
+                categoryInput.focus();
+            }
+        }
+
+        if (categoryChoice && categoryInput) {
+            if (categoryInput.value && categoryChoice.value !== categoryInput.value) {
+                categoryChoice.value = "__new__";
+            }
+            categoryChoice.addEventListener("change", function () {
+                syncCategory(true);
+            });
+            syncCategory(false);
         }
 
         if (exchange) {

@@ -3,6 +3,7 @@ package com.campus.exchange.dao;
 import com.campus.exchange.model.Book;
 import com.campus.exchange.model.LabEquipment;
 import com.campus.exchange.model.Resource;
+import com.campus.exchange.model.DailyEssential;
 import com.campus.exchange.model.StudyMaterial;
 import com.campus.exchange.model.enums.Condition;
 import com.campus.exchange.model.enums.ExchangeType;
@@ -166,7 +167,13 @@ public class ResourceDAO {
             sql.append(" AND pickup_location LIKE ?");
             params.add("%" + criteria.getPickupLocation().trim() + "%");
         }
-        sql.append(" ORDER BY created_at DESC");
+        String sort = criteria.getSort() == null ? "" : criteria.getSort();
+        sql.append(switch (sort) {
+            case "priceAsc" -> " ORDER BY price IS NULL, price ASC, created_at DESC";
+            case "priceDesc" -> " ORDER BY price DESC, created_at DESC";
+            case "condition" -> " ORDER BY `condition` ASC, created_at DESC";
+            default -> " ORDER BY created_at DESC";
+        });
 
         List<Resource> resources = new ArrayList<>();
         try (Connection conn = DbConnection.getConnection();
@@ -287,6 +294,7 @@ public class ResourceDAO {
             case BOOK -> new Book();
             case LAB_EQUIPMENT -> new LabEquipment();
             case STUDY_MATERIAL -> new StudyMaterial();
+            case DAILY_ESSENTIAL -> new DailyEssential();
         };
         resource.setResourceId(rs.getInt("resource_id"));
         resource.setOwnerId(rs.getInt("owner_id"));
